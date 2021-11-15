@@ -20,7 +20,7 @@
     <div class="main">
         <div class="sidebar">
             <div class="">
-                <img src="/assets/images/cool.png" />
+                <img src="{{ '/assets/images/cool.png' | relative_url }}" />
             </div>
             <div class="social">
                 <span>instagram</span>
@@ -28,9 +28,9 @@
                 <span>email</span>
             </div>
             <div class="menu">
-                <a href="/about">about</a>
-                <a href="/art">art</a>
-                <a href="/tech">tech</a>
+                <a href="{{ '/about'  | relative_url }}">about</a>
+                <a href="{{ '/art'  | relative_url }}">art</a>
+                <a href="{{ '/tech'  | relative_url }}">tech</a>
             </div>
         </div>
         
