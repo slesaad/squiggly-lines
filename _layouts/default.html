@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}" media="screen" type="text/css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Comforter+Brush&family=Mansalva&family=Schoolbell&family=Comic+Neue&display=swap" rel="stylesheet">
 
   </head>
 
   <body>
     <header>
-        squiggly lines
-        <div class="tag">perfectly imperfect</div>
+        {{ site.name }}
+        <div class="tag">{{ site.tagline }}</div>
     </header>
 
     <div class="main">
@@ -23,14 +23,15 @@
                 <img src="{{ '/assets/images/cool.png' | relative_url }}" />
             </div>
             <div class="social">
-                <span>instagram</span>
-                <span>github</span>
-                <span>email</span>
+                <span><a href="{{ site.instagram }}">instagram</a></span>
+                <span><a href="{{ site.github }}">github</a></span>
+                <span><a href="{{ site.email }}">email</a></span>
             </div>
             <div class="menu">
-                <a href="{{ '/about'  | relative_url }}">about</a>
+                <a href="{{ '/blog'  | relative_url }}">blog</a>
                 <a href="{{ '/art'  | relative_url }}">art</a>
                 <a href="{{ '/tech'  | relative_url }}">tech</a>
+                <a href="{{ '/misc'  | relative_url }}">misc</a>
             </div>
         </div>
         
@@ -42,7 +43,7 @@
     </div>
 
     <footer class="footer">
-        @saanostory ink. &copy; 2021
+        {{ site.company }} &copy; 2021 by {{ site.author }}
     </footer>
 
   </body>

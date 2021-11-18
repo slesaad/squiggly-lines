@@ -1,6 +1,8 @@
 * {
     margin: 0;
     padding: 0;
+
+    font-size: 18px;
 }
 
 body {
@@ -10,7 +12,7 @@ body {
 
     flex-direction: column;
 
-    font-family: 'Yomogi', cursive;
+    font-family: 'Schoolbell', cursive;
 }
 
 header, footer {
@@ -29,7 +31,7 @@ header {
     border-bottom: 1px solid black;
 
     .tag {
-        font-size: 14px;
+        font-size: 16px;
     }
 }
 
@@ -91,6 +93,7 @@ header {
     }
 
     .content-wrapper {
+        width: 65%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -103,4 +106,9 @@ header {
 footer {
     color: white;
     background-color: black;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }

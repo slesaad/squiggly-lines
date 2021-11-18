@@ -1,2 +1,11 @@
 sass:
   sass_dir: _sass
+
+name: 'squiggly lines'
+tagline: 'perfectly imperfect'
+author: 'slesa'
+company: '@saanostory ink.'
+
+instagram: 'https://www.instagram.com/saanostory/'
+github: 'https://github.com/slesaad/'
+email: 'mailto:slesaad@gmail.com'
