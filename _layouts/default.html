@@ -20,15 +20,17 @@
     <div class="main">
         <div class="sidebar">
             <div class="">
-                <img src="{{ '/assets/images/cool.png' | relative_url }}" />
+                <a href="{{ '/' | relative_url }}"><img class="profile-image" src="{{ '/assets/images/cool.png' | relative_url }}" /></a>
             </div>
             <div class="social">
-                <span><a href="{{ site.instagram }}">instagram</a></span>
-                <span><a href="{{ site.github }}">github</a></span>
-                <span><a href="{{ site.email }}">email</a></span>
+                <a href="{{ site.instagram }}"><img class="icon insta" src="{{ '/assets/images/icons/insta.png' | relative_url}}" alt="instagram"></img></a>
+                <a href="{{ site.github }}"><img class="icon github" src="{{ '/assets/images/icons/github.png' | relative_url}}" alt="github"></img></a>
+                <a href="{{ site.website }}"><img class="icon website" src="{{ '/assets/images/icons/web.png' | relative_url}}" alt="website"></img></a>
+                <a href="{{ site.email }}"><img class="icon email" src="{{ '/assets/images/icons/email.png' | relative_url}}" alt="email"></img></a>
+                <a href="{{ site.linkedin }}"><img class="icon email" src="{{ '/assets/images/icons/linkedin.png' | relative_url}}" alt="linkedin"></img></a>
             </div>
             <div class="menu">
-                <a href="{{ '/blog'  | relative_url }}">blog</a>
+                <a href="{{ '/blog'  | relative_url }}" class="all">all</a>
                 <a href="{{ '/art'  | relative_url }}">art</a>
                 <a href="{{ '/tech'  | relative_url }}">tech</a>
                 <a href="{{ '/misc'  | relative_url }}">misc</a>
