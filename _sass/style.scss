@@ -1,3 +1,5 @@
+$accent-color: #c23616;
+
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +19,6 @@ body {
 
 header, footer {
     height: 10%;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,9 +30,11 @@ header {
 
     font-size: 32px;
     border-bottom: 1px solid black;
+    color: $accent-color;
 
     .tag {
         font-size: 16px;
+        color: black;
     }
 }
 
@@ -51,7 +54,7 @@ header {
         justify-content: center;
         align-items: center;
 
-        img {
+        .profile-image {
             border-radius: 50%;
             border: 1px solid black;
 
@@ -61,20 +64,22 @@ header {
         }
 
         .social {
-            span {
-                &::after {
-                    content: "·";
-                }
+            padding: 24px 0;
 
-                &:last-of-type {
-                    &::after {
-                        content: "";
+            a {
+                margin: 0 8px;
+                
+                &:hover {
+                    cursor: pointer;
+                    
+                    .icon {
+                        transform: scale(1.5);
                     }
                 }
-
-                &:hover {
-                    border-bottom: 1px solid orangered;
-                    cursor: pointer;
+                
+                .icon {
+                    transition: transform 0.2s ease-in-out;
+                    width: 24px;
                 }
             }
         }
@@ -83,10 +88,18 @@ header {
             a {
                 text-decoration: none;
                 padding-right: 8px;
-                border-right: 1px solid black;
+                border-right: 1px solid rgba(0, 0, 0, 0.2);
+
+                &:first-of-type {
+                    border-color: black;
+                }
 
                 &:last-of-type {
                     border: none;
+                }
+
+                &.all {
+                    color: $accent-color;
                 }
             }
         }
@@ -101,6 +114,8 @@ header {
         padding: 56px;
 
     }
+
+    background-image: url('/assets/images/footer.png');
 }
 
 footer {

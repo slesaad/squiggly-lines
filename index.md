@@ -2,11 +2,18 @@
 layout: default
 ---
 
-👋  &nbsp;&nbsp; Heyyo, I'm Slesa!
+👋  &nbsp;&nbsp; heyyo, i'm slesa!
 
-💻  &nbsp;&nbsp; I'm a Computer Scientist / Software Developer.
+💻  &nbsp;&nbsp; i'm a computer scientist / software developer.
 
-🛠️  &nbsp;&nbsp; I'm currently working with the [IMPACT](https://impact.earthdata.nasa.gov/) team under [NASA's ESDS program](https://earthdata.nasa.gov/esds).
-At IMPACT, I work with various Earth Science 🌎 data, products and algorithms.
+🛠️  &nbsp;&nbsp; i'm currently working with the [impact](https://impact.earthdata.nasa.gov/) team under [nasa's esds program](https://earthdata.nasa.gov/esds).
+at impact, i work with various earth science 🌎 data, products and algorithms.
 
-🎨  &nbsp;&nbsp; I like making comics 💭, animations 🎭, digital/traditional painting 🖍️; all kind of art, really. See some of my stuff [@saanostory](https://www.instagram.com/saanostory/).
+🎨  &nbsp;&nbsp; i like making comics 💭, animations 🎭, digital/traditional painting 🖍️; all kind of art, really. see some of my stuff [@saanostory](https://www.instagram.com/saanostory/).
+
+<br />
+<hr>
+<br />
+
+i've started this blog as a way to document my life;  
+it'll be fun to look back and see the stuff i posted
