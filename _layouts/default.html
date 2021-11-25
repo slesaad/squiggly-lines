@@ -13,8 +13,10 @@
 
   <body>
     <header>
-        {{ site.name }}
-        <div class="tag">{{ site.tagline }}</div>
+        <a href="{{ '/' | relative_url }}">
+            {{ site.name }}
+            <div class="tag">{{ site.tagline }}</div>
+        </a>
     </header>
 
     <div class="main">

@@ -4,7 +4,7 @@ layout: default
 
 {% for post in site.posts %}
     <article class="post">
-        <a href="{{ post.url | relative_url }}"> <h1> >> {{ post.title }} </h1> </a>
+        <a href="{{ post.url | relative_url }}" class="title"> <h1> >> {{ post.title }} </h1> </a>
 
         <div class="entry">
             {{ post.excerpt }} <span class="learn-more">learn more...</span>
