@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'SSpotify on an iPod Touch 3G'
+title: 'Spotify on an iPod Touch 3G'
 categories: tech
 ---
 
