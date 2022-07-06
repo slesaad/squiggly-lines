@@ -15,3 +15,9 @@ linkedin: 'https://linkedin.com/in/slesaad'
 
 paginate: 3
 paginate_path: "/blog/page:num/"
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
