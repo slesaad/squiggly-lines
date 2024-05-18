@@ -36,6 +36,7 @@
                 <a href="{{ '/blog'  | relative_url }}" class="all">all</a>
                 <a href="{{ '/art'  | relative_url }}">art</a>
                 <a href="{{ '/dev'  | relative_url }}">dev</a>
+                <a href="{{ '/make'  | relative_url }}">make</a>
                 <a href="{{ '/misc'  | relative_url }}">misc</a>
             </div>
         </div>
@@ -48,8 +49,14 @@
     </div>
 
     <footer class="footer">
-        {{ site.company }} &copy; 2021 by {{ site.author }}
+        <div class="squiggly-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+                <path d="M0 10 C 5 0, 15 20, 25 10 S 35 0, 45 10 S 55 20, 65 10 S 75 0, 85 10 S 95 20, 100 10" stroke="none" fill="black" />
+            </svg>            
+        </div>
+        <div class="footer-content">
+            {{ site.company }} &copy; 2021 by {{ site.author }}
+        </div>
     </footer>
-
   </body>
 </html>
