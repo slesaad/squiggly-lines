@@ -13,8 +13,17 @@ email: 'mailto:slesaad@gmail.com'
 website: 'https://slesa.com.np'
 linkedin: 'https://linkedin.com/in/slesaad'
 
-paginate: 3
-paginate_path: "/blog/page:num/"
+gems:
+  - jekyll-paginate-v2
+
+pagination:
+  enabled: true
+  per_page: 8
+  permalink: '/:num/'
+  title: ':title - page :num of :max'
+  limit: 0
+  sort_field: 'date'
+  sort_reverse: true
 
 markdown: kramdown
 highlighter: rouge
