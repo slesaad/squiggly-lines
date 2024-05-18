@@ -26,20 +26,36 @@ header, footer {
 }
 
 header {
+    position: relative;
     display: flex;
     flex-direction: column;
-
-    border-bottom: 1px solid black;
     color: $accent-color;
-
     padding: 16px 0;
-    a {
-        font-size: 32px !important;
-        .tag {
-            color: black;
-        }
-    }
+    margin-bottom: 20px; /* Adjust if needed to provide spacing for the squiggly line */
 }
+
+header a {
+    font-size: 32px !important;
+}
+
+header a .tag {
+    color: black;
+}
+
+.header-squiggly-line {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 20px; /* Adjust height as needed */
+    overflow: hidden;
+}
+
+.header-squiggly-line svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 
 .main {
     height: 100%;
