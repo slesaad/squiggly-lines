@@ -6,6 +6,7 @@ title: 'squiggly lines'
 tagline: 'perfectly imperfect'
 author: 'slesa'
 company: '@saanostory ink.'
+repository: slesaad/squiggly-lines
 
 instagram: 'https://www.instagram.com/saanostory/'
 github: 'https://github.com/slesaad/'
@@ -13,7 +14,7 @@ email: 'mailto:slesaad@gmail.com'
 website: 'https://slesa.com.np'
 linkedin: 'https://linkedin.com/in/slesaad'
 
-gems:
+plugins:
   - jekyll-paginate-v2
 
 pagination:
