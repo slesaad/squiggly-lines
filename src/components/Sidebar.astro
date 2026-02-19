@@ -1,0 +1,24 @@
+---
+import { SOCIAL, getBase } from '../consts';
+const base = getBase();
+---
+
+<div class="sidebar">
+  <div>
+    <a href={base}><img class="profile-image" src={`${base}images/cool.png`} alt="Profile" /></a>
+  </div>
+  <div class="social">
+    <a href={SOCIAL.instagram}><img class="icon insta" src={`${base}images/icons/insta.png`} alt="instagram" /></a>
+    <a href={SOCIAL.github}><img class="icon github" src={`${base}images/icons/github.png`} alt="github" /></a>
+    <a href={SOCIAL.website}><img class="icon website" src={`${base}images/icons/web.png`} alt="website" /></a>
+    <a href={SOCIAL.email}><img class="icon email" src={`${base}images/icons/email.png`} alt="email" /></a>
+    <a href={SOCIAL.linkedin}><img class="icon linkedin" src={`${base}images/icons/linkedin.png`} alt="linkedin" /></a>
+  </div>
+  <div class="menu">
+    <a href={`${base}blog`} class="all">all</a>
+    <a href={`${base}art`}>art</a>
+    <a href={`${base}dev`}>dev</a>
+    <a href={`${base}make`}>make</a>
+    <a href={`${base}misc`}>misc</a>
+  </div>
+</div>
