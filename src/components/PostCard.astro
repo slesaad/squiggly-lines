@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getBase } from '../consts';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const base = getBase();
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+const excerpt = post.data.excerpt || post.body?.slice(0, 150) + '...';
+---
+
+<article class="post">
+  <a href={`${base}posts/${post.id}`} class="title">
+    <h1>&gt;&gt; {post.data.title}</h1>
+  </a>
+  <div class="entry">
+    {excerpt}
+    <span class="learn-more">
+      <a href={`${base}posts/${post.id}`}>learn more...</a>
+    </span>
+  </div>
+  <div class="date">
+    {formatDate(post.data.date)}
+  </div>
+</article>
