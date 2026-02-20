@@ -8,6 +8,7 @@
     --link-color: purple;
     --border-color: rgba(255, 107, 22, 0.3);
     --squiggly-color: black;
+    --display-picture: var(--display-picture-light);
 }
 
 [data-theme="dark"] {
@@ -20,6 +21,7 @@
     --link-color: #bb86fc;
     --border-color: rgba(224, 108, 0, 0.4);
     --squiggly-color: #e0e0e0;
+    --display-picture: var(--display-picture-dark);
 }
 
 * {
@@ -106,9 +108,12 @@ header a .tag {
             border-radius: 50%;
             border: 1px solid var(--text-color);
 
-            padding: 16px;
-
             width: 150px;
+            height: 150px;
+
+            background-image: var(--display-picture);
+            background-size: cover;
+            background-position: center;
         }
 
         .social {
