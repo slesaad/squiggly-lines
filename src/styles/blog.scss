@@ -1,5 +1,16 @@
 .post {
     margin: 24px 0;
+    padding: 12px;
+    border-radius: 8px;
+    &:has(> a.title) {
+        transition: background-color 0.2s, transform 0.2s;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--border-color);
+            transform: translateX(4px);
+        }
+    }
 
     h1 {
         font-size: 32px;
@@ -25,6 +36,16 @@
         font-size: 14px;
         text-decoration: wavy;
         margin-top: 12px;
+    }
+}
+
+.back-link {
+    font-size: 14px;
+    color: var(--accent-color);
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
     }
 }
 

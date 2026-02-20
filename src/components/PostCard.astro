@@ -23,14 +23,12 @@ const excerpt = post.data.excerpt || post.body?.slice(0, 150) + '...';
 <article class="post">
   <a href={`${base}posts/${post.id}`} class="title">
     <h1>&gt;&gt; {post.data.title}</h1>
+  
+    <div class="entry">
+      {excerpt}
+    </div>
+    <div class="date">
+      {formatDate(post.data.date)}
+    </div>
   </a>
-  <div class="entry">
-    {excerpt}
-    <span class="learn-more">
-      <a href={`${base}posts/${post.id}`}>learn more...</a>
-    </span>
-  </div>
-  <div class="date">
-    {formatDate(post.data.date)}
-  </div>
 </article>
