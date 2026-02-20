@@ -2,6 +2,8 @@
 import { SOCIAL, getBase } from '../consts';
 import ThemeToggle from './ThemeToggle.astro';
 const base = getBase();
+const path = Astro.url.pathname;
+const isActive = (segment: string) => path.startsWith(`${base}${segment}`);
 ---
 
 <div class="sidebar">
@@ -16,11 +18,11 @@ const base = getBase();
     <a href={SOCIAL.linkedin}><img class="icon linkedin" src={`${base}images/icons/linkedin.png`} alt="linkedin" /></a>
   </div>
   <div class="menu">
-    <a href={`${base}blog`} class="all">all</a>
-    <a href={`${base}art`}>art</a>
-    <a href={`${base}dev`}>dev</a>
-    <a href={`${base}make`}>make</a>
-    <a href={`${base}misc`}>misc</a>
+    <a href={`${base}blog`} class:list={["all", { active: isActive("blog") }]}>all</a>
+    <a href={`${base}art`} class:list={[{ active: isActive("art") }]}>art</a>
+    <a href={`${base}dev`} class:list={[{ active: isActive("dev") }]}>dev</a>
+    <a href={`${base}make`} class:list={[{ active: isActive("make") }]}>make</a>
+    <a href={`${base}misc`} class:list={[{ active: isActive("misc") }]}>misc</a>
   </div>
   <ThemeToggle />
 </div>

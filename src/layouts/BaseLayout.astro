@@ -7,9 +7,10 @@ import { SITE, getBase } from '../consts';
 
 interface Props {
   title?: string;
+  category?: string;
 }
 
-const { title } = Astro.props;
+const { title, category } = Astro.props;
 const base = getBase();
 ---
 
@@ -41,6 +42,7 @@ const base = getBase();
     <div class="main">
       <Sidebar />
       <div class="content-wrapper">
+        {category && <span class="category-tag">#{category.toLowerCase()}</span>}
         <div class="content">
           <slot />
         </div>
