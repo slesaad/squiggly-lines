@@ -4,19 +4,28 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import Pagination from '../../components/Pagination.astro';
-import { PAGINATION } from '../../consts';
+import { CATEGORIES, PAGINATION } from '../../consts';
 import '../../styles/blog.scss';
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const posts = await getCollection('posts', ({ data }) => !data.draft && data.category === 'dev');
-  const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  return paginate(sortedPosts, { pageSize: PAGINATION.perPage });
+  const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+  const sorted = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  return CATEGORIES.flatMap((category) => {
+    const filtered = sorted.filter((post) => post.data.category === category);
+    return paginate(filtered, {
+      params: { category },
+      pageSize: PAGINATION.perPage,
+    });
+  });
 };
 
+const { category } = Astro.params;
 const { page } = Astro.props;
+const title = category!.charAt(0).toUpperCase() + category!.slice(1);
 ---
 
-<BaseLayout title="Dev" category="dev">
+<BaseLayout title={title} category={category}>
   <div>
     {page.data.length > 0 ? (
       page.data.map((post) => <PostCard post={post} />)
