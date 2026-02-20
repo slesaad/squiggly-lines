@@ -2,7 +2,7 @@
 
 ## Overview
 
-Squiggly Lines is an Astro-based personal blog/portfolio site for documenting projects, art, and life events. It features a distinctive hand-drawn aesthetic with custom SVG squiggly line decorations and supports interactive content through Svelte components.
+Squiggly Lines is an Astro-based personal blog/portfolio site for documenting projects, art, and life events. It features a distinctive hand-drawn aesthetic with custom SVG squiggly line decorations, dark/light theme support, and interactive content through Svelte components.
 
 ## Technology Stack
 
@@ -11,7 +11,7 @@ Squiggly Lines is an Astro-based personal blog/portfolio site for documenting pr
 | Static Generator | Astro | Site building, routing, and content collections |
 | Interactive Components | Svelte | Client-side interactivity (hydrated islands) |
 | Content Format | MDX | Markdown with embedded components |
-| Styling | SCSS | CSS preprocessing |
+| Styling | SCSS + CSS Custom Properties | Preprocessing and theming |
 | Type Safety | TypeScript | Static typing |
 | CI/CD | GitHub Actions | Automated builds and deployment |
 | Hosting | GitHub Pages | Static site hosting |
@@ -25,44 +25,37 @@ squiggly-lines/
 ├── package.json             # Dependencies and scripts
 ├── public/                  # Static assets (copied as-is)
 │   └── images/
-│       ├── cool.png         # Profile image
+│       ├── cool.png         # Profile image (light theme)
+│       ├── sleepy.png       # Profile image (dark theme)
 │       └── icons/           # Social media icons
 ├── src/
-│   ├── components/          # Reusable UI components
+│   ├── components/
 │   │   ├── Header.astro     # Site header with squiggly line
 │   │   ├── Footer.astro     # Site footer with squiggly line
-│   │   ├── Sidebar.astro    # Profile, social links, navigation
+│   │   ├── Sidebar.astro    # Profile, social links, nav, theme toggle
+│   │   ├── ThemeToggle.astro # Dark/light mode toggle button
 │   │   ├── PostCard.astro   # Blog post preview card
-│   │   ├── Pagination.astro # Prev/next navigation
-│   │   └── Counter.svelte   # Example interactive component
+│   │   └── Pagination.astro # Prev/next navigation
 │   ├── layouts/
-│   │   ├── BaseLayout.astro # Master layout (header, sidebar, footer)
-│   │   └── PostLayout.astro # Individual post layout
-│   ├── pages/               # File-based routing
+│   │   ├── BaseLayout.astro # Master layout (header, sidebar, footer, theme init)
+│   │   └── PostLayout.astro # Individual post layout (back link, article, date)
+│   ├── pages/
 │   │   ├── index.astro      # Home page
-│   │   ├── blog/[...page].astro    # All posts (paginated)
-│   │   ├── art/[...page].astro     # Art category
-│   │   ├── dev/[...page].astro     # Dev category
-│   │   ├── make/[...page].astro    # Make category
-│   │   ├── misc/[...page].astro    # Misc category
-│   │   └── posts/[...slug].astro   # Individual post pages
+│   │   ├── blog/[...page].astro         # All posts (paginated)
+│   │   ├── [category]/[...page].astro   # Dynamic category route (art/dev/make/misc)
+│   │   └── posts/[...slug].astro        # Individual post pages
 │   ├── content/
 │   │   └── posts/           # Blog posts (Markdown/MDX)
-│   │       ├── bigfoot.md
-│   │       ├── art-desk.md
-│   │       ├── book-stand.md
-│   │       └── interactive-demo.mdx
 │   ├── styles/
-│   │   ├── global.scss      # Global styles
-│   │   └── blog.scss        # Blog-specific styles
-│   ├── consts.ts            # Site configuration and helpers
+│   │   ├── global.scss      # CSS variables, layout, typography, responsive
+│   │   └── blog.scss        # Post cards, pagination, back link
+│   ├── consts.ts            # Site config, social links, categories, getBase()
 │   └── content.config.ts    # Content collection schema
 ├── .github/workflows/
 │   └── astro.yml            # GitHub Actions deployment
 └── claude/                  # Documentation
     ├── index.md
-    ├── architecture.md
-    └── astro-migration-plan.md
+    └── architecture.md
 ```
 
 ## Component Architecture
@@ -72,157 +65,96 @@ squiggly-lines/
 ```
 BaseLayout.astro (Master Layout)
 ├── <head>
-│   ├── Meta tags
-│   ├── Google Fonts
-│   └── Global styles (SCSS)
+│   ├── Meta tags, Google Fonts, Global styles
+│   └── Theme flash prevention script (reads localStorage)
+├── <html> (sets --display-picture-light/dark CSS vars from base path)
 ├── Header.astro
 │   ├── Site title + tagline
-│   └── SVG squiggly line decoration
+│   └── SVG squiggly line (stroke="currentColor")
 ├── <div class="main">
 │   ├── Sidebar.astro
-│   │   ├── Profile image
-│   │   ├── Social links (Instagram, GitHub, etc.)
-│   │   └── Navigation menu (all, art, dev, make, misc)
+│   │   ├── Profile image (CSS background-image, swaps per theme)
+│   │   ├── Social links
+│   │   ├── Category nav (active state highlighted)
+│   │   └── ThemeToggle.astro (sun/moon button)
 │   └── Content Wrapper
+│       ├── Category tag pill (optional, e.g. #art)
 │       └── <slot /> (page content)
 └── Footer.astro
-    ├── SVG squiggly line decoration
+    ├── SVG squiggly line (fill="currentColor")
     └── Copyright
 
 PostLayout.astro (extends BaseLayout)
+├── Back link (<< go back)
 └── Article wrapper
     ├── Title
-    ├── <slot /> (post content)
+    ├── <slot /> (rendered markdown)
     └── Date
 ```
 
-### Component Types
+## Theming (Dark/Light Mode)
 
-| Type | Extension | Purpose |
-|------|-----------|---------|
-| Astro | `.astro` | Static components (no JS shipped) |
-| Svelte | `.svelte` | Interactive components (hydrated) |
+### How It Works
+
+1. **CSS Custom Properties** defined in `:root` (light) and `[data-theme="dark"]`
+2. **ThemeToggle.astro** reads/writes `localStorage` key `theme`, sets `data-theme` on `<html>`
+3. **Flash prevention** via inline `<script is:inline>` in `<head>` that sets theme before render
+4. **System preference** respected via `prefers-color-scheme` on first visit
+
+### Theme Variables
+
+| Variable | Light | Dark |
+|----------|-------|------|
+| `--accent-color` | `#c23616` | `#e84118` |
+| `--text-color` | `black` | `#e0e0e0` |
+| `--bg-color` | `white` | `#1a1a2e` |
+| `--footer-bg` | `black` | `#0f0f1a` |
+| `--link-color` | `purple` | `#bb86fc` |
+| `--squiggly-color` | `black` | `#e0e0e0` |
+| `--display-picture` | `cool.png` | `sleepy.png` |
+
+### SVG Adaptation
+
+SVG squiggly lines use `currentColor` for stroke/fill, inheriting from CSS `color` property which is set via theme variables.
+
+### Profile Image
+
+Uses CSS `background-image: var(--display-picture)` where the URL values (including base path) are set as inline styles on `<html>` from BaseLayout.
 
 ## Content System
 
-### Content Collections
-
-Defined in `src/content.config.ts`:
+### Collection Schema (`content.config.ts`)
 
 ```typescript
-const posts = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    category: z.enum(['art', 'dev', 'make', 'misc']),
-    excerpt: z.string().optional(),
-    draft: z.boolean().default(false),
-  }),
-});
+schema: z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  category: z.enum(['art', 'dev', 'make', 'misc']),
+  excerpt: z.string().optional(),
+  cover: z.string().optional(),       // Cover image path (base path auto-prepended)
+  draft: z.boolean().default(false),
+})
 ```
 
-### Post Types
+### Post Card Features
 
-| Extension | Features |
-|-----------|----------|
-| `.md` | Standard Markdown posts |
-| `.mdx` | Markdown + interactive Svelte/React components |
-
-### Creating Interactive Posts
-
-```mdx
----
-title: My Interactive Post
-date: 2024-01-15
-category: dev
----
-
-import Counter from '../../components/Counter.svelte';
-
-# Hello World
-
-<Counter client:visible />
-```
-
-### Hydration Directives
-
-| Directive | Behavior |
-|-----------|----------|
-| `client:load` | Hydrate immediately on page load |
-| `client:idle` | Hydrate when browser is idle |
-| `client:visible` | Hydrate when scrolled into view |
-| `client:media` | Hydrate based on media query |
+- Optional cover image (with base path auto-prepended)
+- Alternating tilt rotation (notebook feel)
+- Numbered via CSS counters (01, 02, ...)
+- Hover effect: straightens + shifts right + background tint
 
 ## Routing
-
-### File-Based Routes
 
 | File | Route | Description |
 |------|-------|-------------|
 | `pages/index.astro` | `/` | Home page |
 | `pages/blog/[...page].astro` | `/blog`, `/blog/2` | All posts (paginated) |
-| `pages/art/[...page].astro` | `/art`, `/art/2` | Art category |
-| `pages/dev/[...page].astro` | `/dev` | Dev category |
-| `pages/make/[...page].astro` | `/make` | Make category |
-| `pages/misc/[...page].astro` | `/misc` | Misc category |
+| `pages/[category]/[...page].astro` | `/art`, `/dev`, `/make`, `/misc` | Dynamic category (paginated) |
 | `pages/posts/[...slug].astro` | `/posts/bigfoot` | Individual posts |
 
-### Pagination
-
-Each category page uses Astro's built-in pagination:
-
-```typescript
-export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const posts = await getCollection('posts', ({ data }) =>
-    !data.draft && data.category === 'dev'
-  );
-  return paginate(sortedPosts, { pageSize: 8 });
-};
-```
-
-## Configuration
-
-### `astro.config.mjs`
-
-```javascript
-export default defineConfig({
-  site: 'https://slesaad.github.io',
-  base: '/squiggly-lines',
-  integrations: [mdx(), sitemap(), svelte()],
-});
-```
-
-### `src/consts.ts`
-
-```typescript
-// Helper for base URL with trailing slash
-export function getBase(): string {
-  const base = import.meta.env.BASE_URL;
-  return base.endsWith('/') ? base : base + '/';
-}
-
-export const SITE = {
-  name: 'squiggly lines',
-  tagline: 'perfectly imperfect',
-  author: 'slesa',
-  company: '@saanostory ink.',
-};
-
-export const SOCIAL = { /* social links */ };
-export const PAGINATION = { perPage: 8 };
-export const CATEGORIES = ['art', 'dev', 'make', 'misc'] as const;
-```
+Categories are defined in `consts.ts` as `CATEGORIES` array. The single dynamic route generates pages for all categories.
 
 ## Styling
-
-### SCSS Architecture
-
-```
-src/styles/
-├── global.scss    # Layout, typography, responsive design
-└── blog.scss      # Post cards, pagination, article styles
-```
 
 ### Design System
 
@@ -232,8 +164,14 @@ src/styles/
 | Font family | `Schoolbell` (cursive, hand-drawn) |
 | Mobile breakpoint | `780px` |
 | Layout | Flexbox, 35%/65% sidebar/content split |
+| Links | Purple with colon decorators (`:link:`) |
 
-## Build Process
+### SCSS Architecture
+
+- `global.scss` — CSS custom properties, base layout, responsive breakpoints
+- `blog.scss` — Post card styles, back link, pagination
+
+## Build & Deployment
 
 ### Commands
 
@@ -243,30 +181,25 @@ npm run build    # Build for production (outputs to dist/)
 npm run preview  # Preview production build
 ```
 
-### Build Output
+### Configuration (`astro.config.mjs`)
 
-- Static HTML pages
-- Optimized CSS (inlined)
-- JavaScript bundles (only for interactive components)
-- Sitemap XML
+```javascript
+export default defineConfig({
+  site: 'https://slesaad.github.io',
+  base: '/squiggly-lines',
+  integrations: [mdx(), sitemap(), svelte()],
+});
+```
 
-## Deployment
+### GitHub Actions
 
-### GitHub Actions (`.github/workflows/astro.yml`)
+1. Trigger: Push to `main` branch
+2. Build: Node.js 20, `npm ci`, `npm run build`
+3. Deploy: Upload `dist/` to GitHub Pages
 
-1. **Trigger**: Push to `main` branch
-2. **Build Job**:
-   - Checkout code
-   - Setup Node.js 20
-   - Install dependencies (`npm ci`)
-   - Build with Astro (`npm run build`)
-   - Upload artifact (`dist/`)
-3. **Deploy Job**:
-   - Deploy to GitHub Pages
+## Adding Content
 
-## Adding New Content
-
-### Standard Blog Post
+### Standard Post
 
 Create `src/content/posts/my-post.md`:
 
@@ -275,14 +208,15 @@ Create `src/content/posts/my-post.md`:
 title: My New Post
 date: 2024-01-20
 category: dev
+cover: images/my-cover.jpg
 ---
 
 Your content here...
 ```
 
-### Interactive Post
+### Interactive Post (MDX)
 
-Create `src/content/posts/my-interactive-post.mdx`:
+Create `src/content/posts/my-post.mdx`:
 
 ```mdx
 ---
@@ -293,23 +227,7 @@ category: dev
 
 import MyComponent from '../../components/MyComponent.svelte';
 
-# Title
-
 <MyComponent client:visible />
-```
-
-### New Svelte Component
-
-Create `src/components/MyComponent.svelte`:
-
-```svelte
-<script>
-  let count = $state(0);
-</script>
-
-<button onclick={() => count++}>
-  Clicked {count} times
-</button>
 ```
 
 ## Project Metadata
