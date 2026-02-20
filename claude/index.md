@@ -6,7 +6,7 @@ This folder contains documentation for the Squiggly Lines project, intended to h
 
 | Document | Description |
 |----------|-------------|
-| [architecture.md](./architecture.md) | Complete architecture overview including technology stack, directory structure, component system, routing, and content management |
+| [architecture.md](./architecture.md) | Complete architecture overview including technology stack, directory structure, component system, theming, routing, and content management |
 | [astro-migration-plan.md](./astro-migration-plan.md) | Historical reference: step-by-step guide used to migrate from Jekyll to Astro |
 
 ## Quick Reference
@@ -14,7 +14,9 @@ This folder contains documentation for the Squiggly Lines project, intended to h
 ### Project Summary
 
 **Squiggly Lines** is an Astro-based personal blog with a hand-drawn aesthetic, featuring:
-- Multi-category blog posts (art, dev, make, misc)
+- Multi-category blog posts (art, dev, make, misc) via a single dynamic route
+- Dark/light theme with CSS custom properties and localStorage persistence
+- Optional cover images on posts
 - Interactive content via Svelte components in MDX
 - SCSS-based styling with responsive design
 - GitHub Pages deployment via Actions
@@ -24,10 +26,11 @@ This folder contains documentation for the Squiggly Lines project, intended to h
 | File | Purpose |
 |------|---------|
 | `astro.config.mjs` | Astro configuration (site, base URL, integrations) |
-| `src/consts.ts` | Site constants and helper functions |
+| `src/consts.ts` | Site constants, categories, and helper functions |
 | `src/content.config.ts` | Content collection schema |
-| `src/layouts/BaseLayout.astro` | Master page template |
-| `src/styles/global.scss` | Main stylesheet |
+| `src/layouts/BaseLayout.astro` | Master page template (theme init, layout) |
+| `src/components/ThemeToggle.astro` | Dark/light mode toggle |
+| `src/styles/global.scss` | CSS variables, layout, responsive styles |
 | `.github/workflows/astro.yml` | CI/CD pipeline |
 
 ### Common Commands
@@ -51,6 +54,8 @@ npm run preview
 title: My Post
 date: 2024-01-20
 category: dev
+cover: images/my-cover.jpg
+excerpt: A short description
 ---
 Content here...
 ```
@@ -72,6 +77,6 @@ import Component from '../../components/Component.svelte';
 - **Astro** - Static site generator with islands architecture
 - **Svelte** - Interactive components
 - **MDX** - Markdown with JSX/components
-- **SCSS** - Styling
+- **SCSS + CSS Custom Properties** - Styling and theming
 - **TypeScript** - Type safety
 - **GitHub Actions + Pages** - CI/CD and hosting
