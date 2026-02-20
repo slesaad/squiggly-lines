@@ -8,6 +8,7 @@ const posts = defineCollection({
     date: z.coerce.date(),
     category: z.enum(['art', 'dev', 'make', 'misc']),
     excerpt: z.string().optional(),
+    cover: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

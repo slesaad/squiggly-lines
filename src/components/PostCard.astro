@@ -22,8 +22,9 @@ const excerpt = post.data.excerpt || post.body?.slice(0, 150) + '...';
 
 <article class="post">
   <a href={`${base}posts/${post.id}`} class="title">
-    <h1>&gt;&gt; {post.data.title}</h1>
+    <h1>{post.data.title}</h1>
   
+    {post.data.cover && <img class="post-cover" src={`${base}${post.data.cover}`} alt={post.data.title} />}
     <div class="entry">
       {excerpt}
     </div>
