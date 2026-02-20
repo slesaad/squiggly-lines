@@ -153,6 +153,13 @@ header a .tag {
 
                 &.all {
                     color: var(--accent-color);
+                    font-weight: bold;
+                    font-size: 1.1em;
+                }
+
+                &.active {
+                    text-decoration: underline;
+                    color: var(--accent-color);
                 }
             }
         }
@@ -162,10 +169,24 @@ header a .tag {
         width: 65%;
         max-height: 75vh;
         display: flex;
+        position: relative;
 
         overflow-y: auto;
 
         padding: 56px;
+
+        .category-tag {
+            position: sticky;
+            top: 0;
+            align-self: flex-start;
+            margin-left: auto;
+            padding: 4px 12px;
+            font-size: 14px;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 16px;
+            white-space: nowrap;
+        }
 
         .content {
             width: 100%;
