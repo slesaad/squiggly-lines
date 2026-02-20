@@ -1,5 +1,6 @@
 ---
 import { SOCIAL, getBase } from '../consts';
+import ThemeToggle from './ThemeToggle.astro';
 const base = getBase();
 ---
 
@@ -21,4 +22,5 @@ const base = getBase();
     <a href={`${base}make`}>make</a>
     <a href={`${base}misc`}>misc</a>
   </div>
+  <ThemeToggle />
 </div>
