@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, date } = post.data;
+const { title, date, fullscreen } = post.data;
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
@@ -19,7 +19,7 @@ function formatDate(date: Date): string {
 }
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} fullscreen={fullscreen}>
   <a class="back-link" href="javascript:history.back()">&lt;&lt; go back</a>
   <article class="post">
     <h1>{title}</h1>

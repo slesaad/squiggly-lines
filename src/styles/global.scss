@@ -9,6 +9,7 @@
     --border-color: rgba(249, 155, 68, 0.3);
     --squiggly-color: black;
     --display-picture: var(--display-picture-light);
+    --sidebar-width: 30%;
 }
 
 [data-theme="dark"] {
@@ -27,6 +28,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -48,10 +50,67 @@ body {
 }
 
 header, footer {
-    height: 10vh;
+    height: 15vh;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+footer {
+    height: 8vh;
+}
+
+// Collapsed state for post/category pages
+body.layout-collapsed {
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        border-right: 2px solid var(--border-color);
+        background-color: var(--bg-color);
+        z-index: 10;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        border-right: 2px solid var(--border-color);
+        z-index: 10;
+    }
+
+    .main {
+        height: 100vh;
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 15vh;
+            bottom: 8vh;
+            width: var(--sidebar-width);
+            z-index: 10;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            max-height: 100vh;
+            margin-left: var(--sidebar-width);
+        }
+    }
+}
+
+// Fullscreen state - no sidebar, header, footer
+body.layout-fullscreen {
+    .main {
+        height: 100vh;
+
+        .content-wrapper {
+            width: 100%;
+            max-height: 100vh;
+        }
+    }
 }
 
 header {
@@ -96,7 +155,7 @@ header a .tag {
     flex: 1;
 
     .sidebar {
-        width: 35%;
+        flex: 0 0 var(--sidebar-width);
         border-right: 2px solid var(--border-color);
 
         display: flex;
@@ -104,6 +163,7 @@ header a .tag {
 
         justify-content: center;
         align-items: center;
+
 
         .profile-image {
             border-radius: 50%;
@@ -167,7 +227,7 @@ header a .tag {
     }
 
     .content-wrapper {
-        width: 65%;
+        flex: 1;
         max-height: 75vh;
         display: flex;
         position: relative;
@@ -249,6 +309,7 @@ code {
 ::-webkit-scrollbar {
     display: none;
 }
+
 
 @media screen and (max-width: 780px) {
     .main {

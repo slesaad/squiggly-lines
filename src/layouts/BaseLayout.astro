@@ -1,17 +1,25 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.scss';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Sidebar from '../components/Sidebar.astro';
-import { SITE, getBase } from '../consts';
+import { SITE, getBase, CATEGORIES } from '../consts';
 
 interface Props {
   title?: string;
   category?: string;
+  collapsed?: boolean;
+  fullscreen?: boolean;
 }
 
-const { title, category } = Astro.props;
+const { title, category, collapsed = false, fullscreen = false } = Astro.props;
 const base = getBase();
+
+// Determine if this page should have collapsed layout
+const path = Astro.url.pathname;
+const isPostPage = path.includes('/posts/');
+const shouldCollapse = !fullscreen && (collapsed || isPostPage);
 ---
 
 <!doctype html>
@@ -27,6 +35,7 @@ const base = getBase();
       rel="stylesheet"
     />
     <title>{title ?? SITE.name}</title>
+    <ViewTransitions />
     <script is:inline>
       (function() {
         const saved = localStorage.getItem('theme');
@@ -36,12 +45,19 @@ const base = getBase();
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
+
+      document.addEventListener('astro:before-swap', (e) => {
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+          e.newDocument.documentElement.setAttribute('data-theme', saved);
+        }
+      });
     </script>
   </head>
-  <body>
-    <Header />
+  <body class:list={[{ 'layout-collapsed': shouldCollapse, 'layout-fullscreen': fullscreen }]}>
+    {!fullscreen && <Header />}
     <div class="main">
-      <Sidebar />
+      {!fullscreen && <Sidebar />}
       <div class="content-wrapper">
         {category && <span class="category-tag">#{category.toLowerCase()}</span>}
         <div class="content">
@@ -49,6 +65,6 @@ const base = getBase();
         </div>
       </div>
     </div>
-    <Footer />
+    {!fullscreen && <Footer />}
   </body>
 </html>
