@@ -9,6 +9,8 @@
     --border-color: rgba(249, 155, 68, 0.3);
     --squiggly-color: black;
     --display-picture: var(--display-picture-light);
+    --sidebar-width: 35%;
+    --sidebar-collapsed-width: 20%;
 }
 
 [data-theme="dark"] {
@@ -27,6 +29,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -47,11 +50,36 @@ body {
     color: var(--text-color);
 }
 
-header, footer {
+header {
     height: 10vh;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+footer {
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// Collapsed state for post/category pages
+body.layout-collapsed {
+    header, footer {
+        width: var(--sidebar-collapsed-width);
+        border-right: 2px solid var(--border-color);
+    }
+
+    .main {
+        .sidebar {
+            flex: 0 0 var(--sidebar-collapsed-width);
+        }
+
+        .content-wrapper {
+            flex: 1;
+        }
+    }
 }
 
 header {
@@ -96,7 +124,7 @@ header a .tag {
     flex: 1;
 
     .sidebar {
-        width: 35%;
+        flex: 0 0 var(--sidebar-width);
         border-right: 2px solid var(--border-color);
 
         display: flex;
@@ -104,6 +132,7 @@ header a .tag {
 
         justify-content: center;
         align-items: center;
+
 
         .profile-image {
             border-radius: 50%;
@@ -167,7 +196,7 @@ header a .tag {
     }
 
     .content-wrapper {
-        width: 65%;
+        flex: 1;
         max-height: 75vh;
         display: flex;
         position: relative;
@@ -249,6 +278,7 @@ code {
 ::-webkit-scrollbar {
     display: none;
 }
+
 
 @media screen and (max-width: 780px) {
     .main {

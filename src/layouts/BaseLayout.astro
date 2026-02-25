@@ -1,17 +1,26 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.scss';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Sidebar from '../components/Sidebar.astro';
-import { SITE, getBase } from '../consts';
+import { SITE, getBase, CATEGORIES } from '../consts';
 
 interface Props {
   title?: string;
   category?: string;
+  collapsed?: boolean;
 }
 
-const { title, category } = Astro.props;
+const { title, category, collapsed = false } = Astro.props;
 const base = getBase();
+
+// Determine if this page should have collapsed layout
+const path = Astro.url.pathname;
+const isPostPage = path.includes('/posts/');
+const isCategoryPage = CATEGORIES.some(cat => path.startsWith(`${base}${cat}`));
+const isBlogPage = path.startsWith(`${base}blog`);
+const shouldCollapse = collapsed || isPostPage || isCategoryPage || isBlogPage;
 ---
 
 <!doctype html>
@@ -27,6 +36,7 @@ const base = getBase();
       rel="stylesheet"
     />
     <title>{title ?? SITE.name}</title>
+    <ViewTransitions />
     <script is:inline>
       (function() {
         const saved = localStorage.getItem('theme');
@@ -36,9 +46,16 @@ const base = getBase();
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
+
+      document.addEventListener('astro:before-swap', (e) => {
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+          e.newDocument.documentElement.setAttribute('data-theme', saved);
+        }
+      });
     </script>
   </head>
-  <body>
+  <body class:list={[{ 'layout-collapsed': shouldCollapse }]}>
     <Header />
     <div class="main">
       <Sidebar />
