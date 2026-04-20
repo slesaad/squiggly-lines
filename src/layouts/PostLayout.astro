@@ -20,12 +20,18 @@ function formatDate(date: Date): string {
 ---
 
 <BaseLayout title={title} fullscreen={fullscreen}>
-  <a class="back-link" href="javascript:history.back()">&lt;&lt; go back</a>
-  <article class="post">
-    <h1>{title}</h1>
-    <div class="entry">
-      <slot />
-    </div>
-    <div class="date">Written on {formatDate(date)}</div>
-  </article>
+  {fullscreen ? (
+    <slot />
+  ) : (
+    <>
+      <a class="back-link" href="javascript:history.back()">&lt;&lt; go back</a>
+      <article class="post">
+        <h1>{title}</h1>
+        <div class="entry">
+          <slot />
+        </div>
+        <div class="date">Written on {formatDate(date)}</div>
+      </article>
+    </>
+  )}
 </BaseLayout>
