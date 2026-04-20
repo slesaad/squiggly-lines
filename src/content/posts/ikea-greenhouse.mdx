@@ -1,0 +1,52 @@
+---
+title: Ikea Greenhouse Cabinet
+date: 2026-04-20
+category: make
+fullscreen: true
+---
+
+import PostHeader from '../../components/PostHeader.svelte';
+import Scrollytelling from '../../components/Scrollytelling.svelte';
+import Gallery from '../../components/Gallery.svelte';
+
+<PostHeader
+  client:load
+  kicker="a make, in 15 steps"
+  title="Ikea Greenhouse Cabinet"
+  description="Turning a plain IKEA cabinet into a tiny indoor greenhouse — lights, fans, shelves, and a lot of plants."
+  image="images/greenhouse/irl/irl-1.webp"
+  imageAlt="The finished greenhouse cabinet"
+/>
+
+<Scrollytelling
+  client:load
+  steps={[
+    { image: 'images/greenhouse/1.webp', caption: 'The IKEA cabinet, fresh out of the box.' },
+    { image: 'images/greenhouse/2.webp', caption: 'Pop the shelves out to make room for the build.' },
+    { image: 'images/greenhouse/3.webp', caption: 'Stick black cling film on the back — instant backdrop.' },
+    { image: 'images/greenhouse/4.webp', caption: 'Hang a grid shelf from the ceiling hooks (there are holes already up top!).' },
+    { image: 'images/greenhouse/5.webp', caption: 'Mount T8 grow lights on the front corners, angled back toward the plants.' },
+    { image: 'images/greenhouse/6.webp', caption: 'Clip fans to the top on magnetic hooks, facing down for airflow.' },
+    { image: 'images/greenhouse/7.webp', caption: 'Hook shelves directly onto the grid wherever plants need a home.' },
+    { image: 'images/greenhouse/8.webp', caption: 'Cable management — the quiet hero of every build.' },
+    { image: 'images/greenhouse/9.webp', caption: 'Time for the fun part: the trinkets!.' },
+    { image: 'images/greenhouse/10.webp', caption: 'Plants move in.' },
+    { image: 'images/greenhouse/11.webp', caption: 'More plants. Always more plants.' },
+    { image: 'images/greenhouse/12.webp', caption: 'More friends!' },
+    { image: 'images/greenhouse/13.webp', caption: 'A bonsai, of course.' },
+    { image: 'images/greenhouse/14.webp', caption: 'Another orchid joins the party.' },
+    { image: 'images/greenhouse/15.webp', caption: 'Done. A tiny greenhouse, all lit up.' },
+  ]}
+/>
+
+<Gallery
+  client:load
+  kicker="epilogue"
+  heading="living in the room"
+  images={[
+    { image: 'images/greenhouse/irl/irl-1.webp', "caption": "recently moved in the orchids" },
+    { image: 'images/greenhouse/irl/irl-2.webp', "caption": "i absolutely love this face planter" },
+    { image: 'images/greenhouse/irl/irl-3.webp', "caption": "from the past, before i killed some of them :'(" },
+    { image: 'images/greenhouse/irl/irl-4.webp', "caption": "the 3d printed door handles" },
+  ]}
+/>
