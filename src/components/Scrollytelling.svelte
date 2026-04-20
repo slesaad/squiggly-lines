@@ -17,6 +17,35 @@
     return baseWithSlash + normalized;
   }
 
+  function mdInline(text) {
+    if (!text) return '';
+    let s = String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    s = s.replace(
+      /\[([^\]]+)\]\(([^)\s]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+    s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    s = s.replace(/(^|\s)_([^_\n]+)_(?=\s|$|[.,!?;:])/g, '$1<em>$2</em>');
+    s = s.replace(/\n/g, '<br>');
+    return s;
+  }
+
+  function stripMd(text) {
+    if (!text) return '';
+    return String(text)
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/_([^_]+)_/g, '$1')
+      .replace(/\s*\n\s*/g, ' ');
+  }
+
   onMount(() => {
     const stepObserver = new IntersectionObserver(
       (entries) => {
@@ -75,7 +104,7 @@
         {#each steps as step, i}
           <img
             src={resolve(step.image)}
-            alt={step.caption}
+            alt={stripMd(step.caption)}
             class:active={i === activeIndex}
             loading={i < 2 ? 'eager' : 'lazy'}
           />
@@ -88,7 +117,7 @@
         <section class="step" data-index={i} class:active={i === activeIndex}>
           <div class="bubble">
             <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
-            <p>{step.caption}</p>
+            <p>{@html mdInline(step.caption)}</p>
           </div>
         </section>
       {/each}
@@ -268,6 +297,28 @@
     font-size: 1.3rem;
     color: var(--text-color);
     line-height: 1.5;
+  }
+
+  .bubble p :global(strong) {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+
+  .bubble p :global(em) {
+    font-style: italic;
+  }
+
+  .bubble p :global(code) {
+    font-family: system-ui, -apple-system, monospace;
+    font-size: 0.95em;
+    background: var(--border-color);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  .bubble p :global(a) {
+    color: var(--link-color);
+    border-bottom: 1px solid currentColor;
   }
 
   @media (max-width: 780px) {
