@@ -72,9 +72,9 @@
     inset: 0;
     background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.5) 0%,
-      rgba(0, 0, 0, 0.75) 50%,
-      rgba(0, 0, 0, 0.90) 100%
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.50) 50%,
+      rgba(0, 0, 0, 0.75) 100%
     );
     pointer-events: none;
   }
