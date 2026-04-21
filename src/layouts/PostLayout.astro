@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, date, fullscreen } = post.data;
+const { title, date, fullscreen, category } = post.data;
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
@@ -20,18 +20,32 @@ function formatDate(date: Date): string {
 ---
 
 <BaseLayout title={title} fullscreen={fullscreen}>
-  {fullscreen ? (
-    <slot />
-  ) : (
-    <>
-      <a class="back-link" href="javascript:history.back()">&lt;&lt; go back</a>
-      <article class="post">
-        <h1>{title}</h1>
-        <div class="entry">
-          <slot />
-        </div>
-        <div class="date">Written on {formatDate(date)}</div>
-      </article>
-    </>
-  )}
+  <div data-post-category={category}>
+    {fullscreen ? (
+      <slot />
+    ) : (
+      <>
+        <a class="back-link" href={`/${category}`} data-back-link>&lt;&lt; go back</a>
+        <article class="post">
+          <h1>{title}</h1>
+          <div class="entry">
+            <slot />
+          </div>
+          <div class="date">Written on {formatDate(date)}</div>
+        </article>
+      </>
+    )}
+  </div>
 </BaseLayout>
+
+<script>
+  document.querySelectorAll('a[data-back-link]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      const ref = document.referrer;
+      if (ref && new URL(ref).origin === window.location.origin && window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+    });
+  });
+</script>

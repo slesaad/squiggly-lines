@@ -7,8 +7,44 @@
   let inView = $state(true);
   let rootEl;
   let storyEl;
+  let backHref = $state('/');
+
+  const groups = $derived.by(() => {
+    const result = [];
+    let flatIdx = 0;
+    steps.forEach((step, gIdx) => {
+      const imgs = step.images && step.images.length ? step.images : [step.image];
+      const units = imgs.map((img) => ({ image: img, flatIndex: flatIdx++ }));
+      result.push({
+        groupIndex: gIdx,
+        caption: step.caption,
+        units,
+        isGroup: imgs.length > 1,
+      });
+    });
+    return result;
+  });
+
+  const units = $derived(groups.flatMap((g) => g.units.map((u) => ({ ...u, caption: g.caption }))));
+  const activeGroup = $derived(
+    groups.find((g) => g.units.some((u) => u.flatIndex === activeIndex))?.groupIndex ?? 0
+  );
 
   const base = import.meta.env.BASE_URL || '';
+
+  function resolveBack(path) {
+    const normalized = path.startsWith('/') ? path.slice(1) : path;
+    const baseWithSlash = base.endsWith('/') ? base : base + '/';
+    return baseWithSlash + normalized;
+  }
+
+  function handleBack(e) {
+    const ref = document.referrer;
+    if (ref && new URL(ref).origin === window.location.origin && window.history.length > 1) {
+      e.preventDefault();
+      window.history.back();
+    }
+  }
 
   function resolve(src) {
     if (src.startsWith('http') || src.startsWith(base)) return src;
@@ -47,6 +83,10 @@
   }
 
   onMount(() => {
+    const categoryEl = rootEl.closest('[data-post-category]');
+    const category = categoryEl?.dataset.postCategory;
+    backHref = resolveBack(category ? `/${category}` : '/');
+
     const stepObserver = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -80,16 +120,16 @@
 </script>
 
 <div class="scrollytelling" bind:this={rootEl}>
-  <a class="back-link" class:hidden={!inView} href="javascript:history.back()">&lt;&lt; go back</a>
+  <a class="back-link" class:hidden={!inView} href={backHref} onclick={handleBack}>&lt;&lt; go back</a>
 
   <div class="progress-indicator" class:hidden={!inView}>
-    {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
+    {String(activeGroup + 1).padStart(2, '0')} / {String(groups.length).padStart(2, '0')}
   </div>
 
   <div class="progress-bar" class:hidden={!inView}>
     <div
       class="progress-bar-fill"
-      style="height: {((activeIndex + 1) / steps.length) * 100}%"
+      style="height: {((activeGroup + 1) / groups.length) * 100}%"
     ></div>
   </div>
 
@@ -101,10 +141,10 @@
         </div>
       {/if}
       <div class="image-stack">
-        {#each steps as step, i}
+        {#each units as unit, i}
           <img
-            src={resolve(step.image)}
-            alt={stripMd(step.caption)}
+            src={resolve(unit.image)}
+            alt={stripMd(unit.caption)}
             class:active={i === activeIndex}
             loading={i < 2 ? 'eager' : 'lazy'}
           />
@@ -113,13 +153,28 @@
     </div>
 
     <div class="story-side" bind:this={storyEl}>
-      {#each steps as step, i}
-        <section class="step" data-index={i} class:active={i === activeIndex}>
-          <div class="bubble">
-            <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
-            <p>{@html mdInline(step.caption)}</p>
+      {#each groups as group}
+        {#if group.isGroup}
+          <div class="step-group">
+            <div class="sticky-bubble-wrap">
+              <div class="bubble" class:active={group.units.some((u) => u.flatIndex === activeIndex)}>
+                <span class="step-num">{String(group.groupIndex + 1).padStart(2, '0')}</span>
+                <p>{@html mdInline(group.caption)}</p>
+              </div>
+            </div>
+            {#each group.units as unit}
+              <section class="step short" data-index={unit.flatIndex} class:active={unit.flatIndex === activeIndex}></section>
+            {/each}
           </div>
-        </section>
+        {:else}
+          {@const unit = group.units[0]}
+          <section class="step" data-index={unit.flatIndex} class:active={unit.flatIndex === activeIndex}>
+            <div class="bubble">
+              <span class="step-num">{String(group.groupIndex + 1).padStart(2, '0')}</span>
+              <p>{@html mdInline(group.caption)}</p>
+            </div>
+          </section>
+        {/if}
       {/each}
     </div>
   </div>
@@ -257,6 +312,35 @@
     padding: 2rem 0;
   }
 
+  .step.short {
+    min-height: 45vh;
+    padding: 0;
+  }
+
+  .step-group {
+    position: relative;
+  }
+
+  .sticky-bubble-wrap {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    pointer-events: none;
+    margin-bottom: -100vh;
+  }
+
+  .sticky-bubble-wrap .bubble {
+    pointer-events: auto;
+    opacity: 0;
+  }
+
+  .sticky-bubble-wrap .bubble.active {
+    opacity: 1;
+  }
+
   .bubble {
     background: var(--bg-color);
     border: 2px solid var(--border-color);
@@ -276,7 +360,8 @@
     transform: rotate(0.5deg);
   }
 
-  .step.active .bubble {
+  .step.active .bubble,
+  .bubble.active {
     opacity: 1;
     transform: rotate(0deg) scale(1.02);
     box-shadow: 4px 7px 18px rgba(0, 0, 0, 0.18);
