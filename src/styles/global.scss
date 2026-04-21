@@ -266,9 +266,6 @@ header a .tag {
 
         a {
             color: var(--link-color);
-            &::before, &::after {
-                content: ':';
-            }
         }
     }
 }
