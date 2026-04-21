@@ -11,10 +11,10 @@ import Gallery from '../../components/Gallery.svelte';
 
 <PostHeader
   client:load
-  kicker="a make, in 15 steps"
+  kicker="a make, in 10 steps"
   title="Ikea Greenhouse Cabinet"
   description="turning a plain IKEA cabinet into a tiny indoor greenhouse — lights, fans, shelves, and a lot of plants."
-  image="images/greenhouse/irl/irl-7.webp"
+  image="images/greenhouse/irl/irl-6.webp"
   imageAlt="the finished greenhouse cabinet"
 />
 
@@ -29,13 +29,19 @@ import Gallery from '../../components/Gallery.svelte';
     { image: 'images/greenhouse/6.webp', caption: 'clip fans to the top on magnetic hooks, facing down for airflow.' },
     { image: 'images/greenhouse/7.webp', caption: 'hook shelves directly onto the grid wherever plants need a home.' },
     { image: 'images/greenhouse/8.webp', caption: 'cable management — the quiet hero of every build. \n \n _you will need to drill a hole at the bottom for the cables. make sure to use a metal drill bit; we learned that the hard way_' },
-    { image: 'images/greenhouse/9.webp', caption: 'time for the fun part: the trinkets!.' },
-    { image: 'images/greenhouse/10.webp', caption: 'plants move in.' },
-    { image: 'images/greenhouse/11.webp', caption: 'another plant.' },
-    { image: 'images/greenhouse/12.webp', caption: 'more plant friends!' },
-    { image: 'images/greenhouse/13.webp', caption: 'plantsss.' },
-    { image: 'images/greenhouse/14.webp', caption: 'a bonsai, of course.' },
-    { image: 'images/greenhouse/15.webp', caption: 'another orchid joins the party. done! a tiny greenhouse, all lit up.' },
+    {
+      images: [
+        'images/greenhouse/9.webp',
+        'images/greenhouse/10.webp',
+        'images/greenhouse/11.webp',
+        'images/greenhouse/12.webp',
+        'images/greenhouse/13.webp',
+        'images/greenhouse/14.webp',
+        'images/greenhouse/15.webp',
+      ],
+      caption: 'time for the fun part: the trinkets and plant friends move in.',
+    },
+    { image: 'images/greenhouse/irl/irl-0.webp', caption: 'done — a tiny greenhouse, all lit up.' },
   ]}
 />
 
@@ -48,7 +54,6 @@ import Gallery from '../../components/Gallery.svelte';
     { image: 'images/greenhouse/irl/irl-2.webp', "caption": "i absolutely love this face planter" },
     { image: 'images/greenhouse/irl/irl-3.webp', "caption": "from the past, before i killed some of them :'(" },
     { image: 'images/greenhouse/irl/irl-4.webp', "caption": "the 3d printed door handles" },
-    { image: 'images/greenhouse/irl/irl-5.webp', "caption": "excited about my build" },
-    { image: 'images/greenhouse/irl/irl-6.webp', "caption": "orchids are amazing" },
+    { image: 'images/greenhouse/irl/irl-5.webp', "caption": "orchids are amazing" },
   ]}
 />
