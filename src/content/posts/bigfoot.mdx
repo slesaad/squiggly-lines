@@ -1,0 +1,125 @@
+---
+title: Bigfoot
+date: 2021-10-12
+category: dev
+fullscreen: true
+---
+
+import PostHeader from '../../components/PostHeader.svelte';
+import BigfootScrollytelling from '../../components/BigfootScrollytelling.svelte';
+
+<PostHeader
+  client:load
+  kicker="a dev project, scrolled through"
+  title="Bigfoot"
+  description="a map of every flight, every road trip, and every place i've been — scroll through the story, then play with the map at the end."
+/>
+
+<BigfootScrollytelling
+  client:load
+  src="https://slesaad.github.io/bigfoot/"
+  steps={[
+    {
+      caption: "i'm a traveller. i also like data viz. so i mashed them together — every flight, every drive, every stop on one map.",
+      reset: true,
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      view: { center: [0, 20], zoom: 1, duration: 1800 },
+    },
+    {
+      caption: 'now watch it unfold **year by year** — a slow sweep through the timeline.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      animateYears: { tickMs: 900, loop: true },
+    },
+    {
+      caption: "but here are **my favorites** — the trips i still think about. let's revisit them.",
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2021, to: 2026 },
+      view: { center: [0, 20], zoom: 1, duration: 1800 },
+      markers: [
+        { emoji: '🏜️', x: '20%', y: '38%' },
+        { emoji: '🌲', x: '17%', y: '36%' },
+        { emoji: '🌴', x: '28%', y: '43%' },
+        { emoji: '🌺', x: '8%', y: '46%' },
+        { emoji: '🏔️', x: '73%', y: '45%' },
+        { emoji: '🐠', x: '88%', y: '72%' },
+      ],
+    },
+    {
+      caption: '**march 6–13, 2021** — las vegas, grand canyon, zion. first big southwest loop.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2021, to: 2021 },
+      highlight: { trip: '2021-03-06..2021-03-13', flight: '2021-03-06..2021-03-13' },
+      view: { center: [-113, 36.5], zoom: 6, duration: 2000, flyFromHome: true },
+      markers: [{ emoji: '🏜️', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: '**march 5–11, 2022** — kings canyon, yosemite, san francisco. giant trees and the pacific.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2022, to: 2022 },
+      highlight: { trip: '2022-03-05..2022-03-11', flight: '2022-03-05..2022-03-11' },
+      view: { center: [-119.5, 37.5], zoom: 6, duration: 2000, flyFromHome: true },
+      markers: [{ emoji: '🌲', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: '**oct 14–20, 2022** — trekking to **annapurna base camp**. 4,130 meters up. felt every step.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2022, to: 2022 },
+      highlight: { trip: '2022-10-14..2022-10-20', flight: '2022-10-14..2022-10-20' },
+      view: {
+        center: [83.88, 28.53],
+        zoom: 9,
+        duration: 2200,
+        flyFrom: [85.32, 27.72],
+        homeZoom: 7,
+        homeDuration: 1300,
+      },
+      markers: [{ emoji: '🏔️', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: '**march 10–17, 2023** — everglades, key west, biscayne, miami. all the way down to the bottom of florida.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2023, to: 2023 },
+      highlight: { trip: '2023-03-10..2023-03-17', flight: '2023-03-10..2023-03-17' },
+      view: { center: [-80.5, 25.7], zoom: 6, duration: 2000, flyFromHome: true },
+      markers: [{ emoji: '🌴', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: '**sept 27 – oct 8, 2024** — australia. snorkeled the great barrier reef. still thinking about it.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2024, to: 2024 },
+      highlight: { trip: '2024-09-27..2024-11-15', flight: '2024-09-27..2024-11-15' },
+      view: { center: [144, -28], zoom: 4, duration: 2400, flyFromHome: true, homeDuration: 1300 },
+      markers: [{ emoji: '🐠', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: '**july 12–15, 2025** — vegas, grand canyon, zion again — this time with sister and niece. zion is still the favorite.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2025, to: 2025 },
+      highlight: { trip: '2025-07-12..2025-07-15', flight: '2025-07-12..2025-07-15' },
+      view: { center: [-113, 36.5], zoom: 6, duration: 2000, flyFromHome: true },
+      markers: [{ emoji: '🏜️', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: '**march 8–17, 2026** — hawaii, big island. volcanoes, black and green sand, plants living their best life.',
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      yearRange: { from: 2026, to: 2026 },
+      highlight: { trip: '2026-03-08..2026-03-17', flight: '2026-03-08..2026-03-17' },
+      view: { center: [-155.5, 19.6], zoom: 8, duration: 2400, flyFromHome: true, homeDuration: 1300 },
+      markers: [{ emoji: '🌺', x: '50%', y: '50%', size: '4rem' }],
+    },
+    {
+      caption: 'and after every trip, back here. **huntsville** — the dot the others orbit.',
+      layers: { flights: false, 'road-trips': false, places: true, states: true },
+      yearRange: { from: 2021, to: 2026 },
+      highlight: { trip: null, flight: null },
+      view: { center: [-86.5861, 34.7304], zoom: 11, duration: 2200 },
+      heartOverlay: true,
+    },
+    {
+      caption: 'your turn — pan, zoom, toggle layers, poke around. [or open it full-screen](https://slesaad.github.io/bigfoot/).',
+      reset: true,
+      layers: { flights: true, 'road-trips': true, places: true, states: true },
+      view: { center: [0, 20], zoom: 1, duration: 2000 },
+    },
+  ]}
+/>
