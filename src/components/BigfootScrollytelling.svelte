@@ -69,15 +69,43 @@
     return v == null ? v : JSON.parse(JSON.stringify(v));
   }
 
+  let lastSent = {
+    layers: null,
+    yearRange: null,
+    highlight: null,
+  };
+
+  function sameJson(a, b) {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+
   function applyStep(idx) {
     const step = steps[idx];
     if (!step) return;
-    if (step.reset) post({ type: 'bigfoot:reset' });
-    if (step.layers) post({ type: 'bigfoot:setLayers', layers: plain(step.layers) });
-    if (step.yearRange) post({ type: 'bigfoot:setYearRange', ...plain(step.yearRange) });
+    if (step.reset) {
+      post({ type: 'bigfoot:reset' });
+      lastSent = { layers: null, yearRange: null, highlight: null };
+    }
+    if (step.layers) {
+      const next = plain(step.layers);
+      if (!sameJson(next, lastSent.layers)) {
+        post({ type: 'bigfoot:setLayers', layers: next });
+        lastSent.layers = next;
+      }
+    }
+    if (step.yearRange) {
+      const next = plain(step.yearRange);
+      if (!sameJson(next, lastSent.yearRange)) {
+        post({ type: 'bigfoot:setYearRange', ...next });
+        lastSent.yearRange = next;
+      }
+    }
     if (step.highlight !== undefined) {
-      const h = plain(step.highlight) ?? { flight: null, trip: null };
-      post({ type: 'bigfoot:setHighlight', ...h });
+      const next = plain(step.highlight) ?? { flight: null, trip: null };
+      if (!sameJson(next, lastSent.highlight)) {
+        post({ type: 'bigfoot:setHighlight', ...next });
+        lastSent.highlight = next;
+      }
     }
     if (step.view) {
       const v = plain(step.view);
@@ -237,7 +265,7 @@
           src={iframeSrc}
           title="bigfoot map"
           class:interactive={isLastStep}
-          loading="lazy"
+          loading="eager"
         ></iframe>
       {/if}
       {#if isLastStep && !hintDismissed}
