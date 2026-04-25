@@ -65,6 +65,11 @@
     win.postMessage(msg, iframeOrigin || '*');
   }
 
+  function currentTheme() {
+    const t = document.documentElement.getAttribute('data-theme');
+    return t === 'dark' ? 'dark' : 'light';
+  }
+
   function plain(v) {
     return v == null ? v : JSON.parse(JSON.stringify(v));
   }
@@ -197,10 +202,19 @@
       if (e.source !== iframeEl?.contentWindow) return;
       if (e.data?.type === 'bigfoot:ready') {
         ready = true;
+        post({ type: 'bigfoot:setTheme', theme: currentTheme() });
         applyStep(activeIndex);
       }
     }
     window.addEventListener('message', onMessage);
+
+    const themeObserver = new MutationObserver(() => {
+      if (ready) post({ type: 'bigfoot:setTheme', theme: currentTheme() });
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
 
     function onWindowBlur() {
       if (isLastStep && document.activeElement === iframeEl) {
@@ -234,6 +248,7 @@
       window.removeEventListener('blur', onWindowBlur);
       stepObserver.disconnect();
       rootObserver.disconnect();
+      themeObserver.disconnect();
     };
   });
 </script>
