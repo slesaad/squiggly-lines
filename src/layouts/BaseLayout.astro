@@ -4,6 +4,7 @@ import '../styles/global.scss';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Sidebar from '../components/Sidebar.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { SITE, getBase, CATEGORIES } from '../consts';
 
 interface Props {
@@ -66,5 +67,24 @@ const shouldCollapse = !fullscreen && (collapsed || isPostPage);
       </div>
     </div>
     {!fullscreen && <Footer />}
+    {fullscreen && (
+      <div class="floating-theme-toggle">
+        <ThemeToggle />
+      </div>
+    )}
   </body>
 </html>
+
+<style is:global>
+  .floating-theme-toggle {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 30;
+  }
+
+  .floating-theme-toggle .theme-toggle {
+    margin-top: 0;
+    background: var(--bg-color);
+  }
+</style>
