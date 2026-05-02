@@ -263,19 +263,21 @@
     function onUserScroll() {
       if (autoplay) stopAutoplay();
     }
-    window.addEventListener('wheel', onUserScroll, { passive: true });
-    window.addEventListener('touchstart', onUserScroll, { passive: true });
-    window.addEventListener('keydown', (e) => {
+    function onKeyDown(e) {
       if (['ArrowDown','ArrowUp','PageDown','PageUp','Space','Home','End'].includes(e.code)) {
         onUserScroll();
       }
-    });
+    }
+    window.addEventListener('wheel', onUserScroll, { passive: true });
+    window.addEventListener('touchstart', onUserScroll, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
 
     return () => {
       stepObserver.disconnect();
       rootObserver.disconnect();
       window.removeEventListener('wheel', onUserScroll);
       window.removeEventListener('touchstart', onUserScroll);
+      window.removeEventListener('keydown', onKeyDown);
       clearAutoplayTimer();
     };
   });
@@ -932,6 +934,24 @@
       bottom: 0.5rem;
       right: 0.5rem;
     }
+
+    .video-card {
+      width: 90vw;
+      max-height: 50vh;
+    }
+    .video-card video {
+      max-height: 42vh;
+    }
+
+    .photo-stage .cap-overlay { font-size: 5rem; }
+    .photo-stage .gown-overlay { font-size: 11rem; }
+    .frame { width: 200px; height: 150px; }
+    .parchment { font-size: 1.1rem; }
+    .exam-bubble { font-size: 1.1rem; right: 4%; max-width: 200px; }
+    .placeholder-party { padding: 1.5rem 2rem; font-size: 1.1rem; }
+    .placeholder-party strong { font-size: 1.5rem; }
+    .fin-card { font-size: 5rem; }
+    .play-button { top: 5rem; }
   }
 
   .party-card {
