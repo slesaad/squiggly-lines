@@ -99,6 +99,25 @@
     return flyTransform(null, 1);
   });
 
+  let videoEl;
+  let videoMuted = $state(true);
+
+  function toggleMute() {
+    videoMuted = !videoMuted;
+  }
+
+  $effect(() => {
+    // Re-runs when activeIndex changes; videoEl is the (re-bound) <video>.
+    if (videoEl && steps[activeIndex]?.kind === 'video') {
+      videoEl.currentTime = 0;
+      videoEl.muted = videoMuted;
+      const playPromise = videoEl.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(() => { /* autoplay blocked; user must tap */ });
+      }
+    }
+  });
+
   let examIdx = $state(0);
   let examTimer = null;
 
@@ -236,6 +255,23 @@
               <strong>{steps[activeIndex]?.name ?? ''}</strong>
               <span>{LOCATION_LABELS[steps[activeIndex]?.locationKey] ?? ''}</span>
             </div>
+          {/if}
+          {#if steps[activeIndex]?.kind === 'video' && steps[activeIndex]?.src}
+            {#key activeIndex}
+              <div class="video-card">
+                <video
+                  bind:this={videoEl}
+                  src={steps[activeIndex].src}
+                  muted={videoMuted}
+                  playsinline
+                  preload="metadata"
+                  onended={() => { /* hooked up to autoplay-advance in Task 10 */ }}
+                ></video>
+                <button class="mute-toggle" type="button" onclick={toggleMute}>
+                  {videoMuted ? '🔇 unmute' : '🔊 mute'}
+                </button>
+              </div>
+            {/key}
           {/if}
         </div>
       </div>
@@ -680,5 +716,43 @@
     display: block;
     color: var(--text-color);
     font-size: 0.95rem;
+  }
+
+  /* Video card overlay */
+  .video-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-1.5deg);
+    width: min(50vw, 540px);
+    max-height: 70vh;
+    background: var(--bg-color);
+    border: 6px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 8px 10px 30px rgba(0, 0, 0, 0.35);
+    z-index: 3;
+    padding: 8px 8px 36px;
+  }
+  .video-card video {
+    width: 100%;
+    max-height: 60vh;
+    display: block;
+    background: #000;
+  }
+  .mute-toggle {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: var(--bg-color);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .mute-toggle:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
   }
 </style>
