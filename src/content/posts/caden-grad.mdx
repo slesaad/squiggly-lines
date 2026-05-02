@@ -15,9 +15,18 @@ import GradScrollytelling from '../../components/GradScrollytelling.svelte';
   cadenTriumphantPhoto="/squiggly-lines/images/caden2.jpg"
   worldMap="/squiggly-lines/images/world-map.svg"
   steps={[
-    { kind: 'intro-greeting', caption: 'photo panel', duration: 4000 },
-    { kind: 'map-intro', caption: 'map panel', duration: 4000 },
-    { kind: 'ending', caption: 'ending panel', duration: 4000 },
-    { kind: 'outtakes', caption: 'outtakes panel', duration: 4000 },
+    { kind: 'intro-greeting', caption: '**hey caden!** 🎓', duration: 4000 },
+    { kind: 'intro-skit-cap', caption: "you've been promoted from *bachelor* to **master**.", duration: 5000 },
+    { kind: 'intro-skit-gown', caption: 'ceremonial robe, just for you.', duration: 4000 },
+    { kind: 'intro-skit-degree', caption: 'a degree so heavy you can barely hold it.', duration: 5000 },
+    { kind: 'late-nights', caption: "many late nights, sweat, and tears…", duration: 8000,
+      examBubbles: [
+        "ahhh I'm gonna fail!!! (Algorithms)",
+        "ahhh I'm gonna fail!!! (OS)",
+        "ahhh I'm gonna fail!!! (Compilers)",
+        "...every single exam.",
+      ],
+    },
+    { kind: 'flying-colors', caption: 'but you passed with **flying colors.**', duration: 5000 },
   ]}
 />
