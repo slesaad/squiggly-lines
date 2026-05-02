@@ -125,10 +125,10 @@
   };
 
   const BLOOPERS = [
-    '/squiggly-lines/videos/CHG Videos/bloopers/Mamu&DaddyBloopers.mp4',
-    '/squiggly-lines/videos/CHG Videos/bloopers/Mamu&DaddyBloopers1.mp4',
-    '/squiggly-lines/videos/CHG Videos/bloopers/Mamu&DaddyBloopers2.mp4',
-    '/squiggly-lines/videos/CHG Videos/bloopers/Mom&Addison2.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers1.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers2.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/MomAddison2.mp4',
   ];
 
   const showBlooper = $derived(MAP_KINDS.has(activeKind));
