@@ -126,20 +126,24 @@ Acts 1 and 3 are largely fixed. Act 2 is data-driven from the videos that exist 
 
 ### Act 2: Voices From Around the World (data-driven)
 
-Source data — list of video files in `public/videos/CHG Videos/`:
+Source data — list of video files in `public/videos/CHG Videos/` (location encoded in filename as `Name-location.ext`):
 
 ```
-Angela.mp4
-Ben.mov
-Blaine&Ramona.mp4
-BrandonDang.mov
-Chase.MOV          → Saudi Arabia (confirmed)
-Dad.mp4
-Liesl.mov
-Mamu&Daddy.mp4     → likely Nepal (Mamu = Nepali for maternal uncle)
-Mom&Addison.mp4
-Saam.mp4
+Angela-atlanta.mp4
+Ben-texas.mov
+Blaine&Ramona-phoenixalabama.mp4
+BrandonDang-pennsylvinia.mov
+Chase-saudiarabia.MOV
+collettee-northcarolina.MOV
+collettee2-northcarolina.MOV     # second clip from Collettee
+Dad-alabama.mp4
+Liesl-atlanta.mov
+Mamu&Daddy-nepal.mp4
+Mom&Addison-atlanta.mp4
+Saam-nashville.mp4
 ```
+
+Filename parsing (during implementation): the segment after `-` and before the file extension is the location slug, used to look up coordinates from a small constant table. Display location is title-cased and humanized (`saudiarabia` → "Saudi Arabia", `phoenixalabama` → "Phenix City, AL" — confirm during implementation).
 
 Each video becomes a `VideoStep` with shape:
 
@@ -155,7 +159,7 @@ Each video becomes a `VideoStep` with shape:
 }
 ```
 
-> **OPEN ITEM (must fill before implementation):** Slesa to confirm the location for each name. Placeholder mapping in the implementation will use ⚠️ TBD coords until confirmed. The "fly" sequence order should also be chosen to feel like a coherent journey (e.g., farthest-from-home → closer-to-home, ending naturally at the surprise party in Huntsville, AL).
+> **OPEN ITEM:** Locations now encoded in filenames. The "fly" sequence order still needs picking — default plan: farthest-from-Huntsville → closest, ending naturally at the surprise party in Huntsville, AL. Order draft: Saudi Arabia → Nepal → Pennsylvania → North Carolina (Collettee ×2 back-to-back) → Atlanta (Angela, Liesl, Mom&Addison grouped) → Nashville → Texas → Phenix City AL → Alabama (Dad) → Huntsville (home). Confirm during implementation.
 
 #### Map "fly" mechanics
 
@@ -355,11 +359,13 @@ Type-checking (`astro check`) and existing build (`npm run build`) must pass.
 
 ## Open items (to fill before / during implementation)
 
-1. **Location-per-name mapping.** Slesa to confirm: Angela, Ben, Blaine&Ramona, Brandon Dang, Dad, Liesl, Mom&Addison, Saam → which city/country each? (Chase = Saudi Arabia confirmed; Mamu&Daddy = Nepal assumed.)
-2. **Order of map fly-throughs.** Default suggestion: farthest-from-Huntsville → closest, ending naturally on Huntsville. Slesa to confirm or override.
-3. **Exam names** in the late-nights speech bubble (best if real classes Caden took: Algorithms? OS? Compilers? Networking?)
+1. ~~Location-per-name mapping~~ — **DONE**, locations are encoded in filenames (`Name-location.ext`).
+2. **Order of map fly-throughs.** Default: farthest-from-Huntsville → closest. Confirm during implementation.
+3. **Exam names** in the late-nights speech bubble — funniest if real classes Caden took. Placeholders: Algorithms / OS / Compilers / Networking.
 4. **World map SVG source.** Pick a CC0 outline during implementation.
 5. **Surprise party photo** drop-in tomorrow morning — confirmed swap point in MDX.
+6. **`phoenixalabama` interpretation** — assumed Phenix City, AL. Confirm during implementation.
+7. **Compression** — script written but **not run yet**. Run before deploy / push (per Slesa: "compress later when ready to push").
 
 ## Parking lot (deferred polish)
 
