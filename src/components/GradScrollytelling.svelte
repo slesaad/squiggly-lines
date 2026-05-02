@@ -129,6 +129,24 @@
     }
   });
 
+  let outtakeIdx = $state(0);
+  let outtakeFin = $state(false);
+
+  $effect(() => {
+    if (activeKind === 'outtakes') {
+      outtakeIdx = 0;
+      outtakeFin = false;
+    }
+  });
+
+  function advanceOuttake() {
+    if (outtakeIdx < BLOOPERS.length - 1) {
+      outtakeIdx += 1;
+    } else {
+      outtakeFin = true;
+    }
+  }
+
   let examIdx = $state(0);
   let examTimer = null;
 
@@ -287,12 +305,31 @@
         </div>
       </div>
       <div class="panel" class:visible={activePanel === 'ending'}>
-        <!-- Party card filled in Task 11 -->
-        <div class="placeholder">PARTY CARD</div>
+        <div class="party-card">
+          <!-- SWAP POINT: replace this block with <img src="/squiggly-lines/images/party.jpg" /> after the surprise party. -->
+          <div class="placeholder-party">
+            🎉<br/>
+            <strong>the surprise party</strong><br/>
+            <span>photos land here<br/>tomorrow</span><br/>
+            🎉
+          </div>
+        </div>
       </div>
       <div class="panel" class:visible={activePanel === 'outtakes'}>
-        <!-- Outtakes reel filled in Task 11 -->
-        <div class="placeholder">OUTTAKES REEL</div>
+        {#if outtakeFin}
+          <div class="fin-card">fin.</div>
+        {:else}
+          {#key outtakeIdx}
+            <video
+              class="outtake-reel"
+              src={BLOOPERS[outtakeIdx]}
+              autoplay
+              playsinline
+              preload="metadata"
+              onended={advanceOuttake}
+            ></video>
+          {/key}
+        {/if}
       </div>
     </div>
 
@@ -807,5 +844,57 @@
       bottom: 0.5rem;
       right: 0.5rem;
     }
+  }
+
+  .party-card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .placeholder-party {
+    background: var(--bg-color);
+    border: 4px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--text-color);
+    transform: rotate(-1.5deg);
+    box-shadow: 4px 6px 18px rgba(0,0,0,0.18);
+  }
+  .placeholder-party strong {
+    font-size: 2rem;
+    color: var(--accent-color);
+    display: block;
+    margin: 0.5rem 0;
+  }
+  .placeholder-party span {
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.7;
+  }
+
+  .outtake-reel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .fin-card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', serif;
+    font-size: 8rem;
+    font-style: italic;
+    color: var(--accent-color);
+    background: var(--bg-color);
   }
 </style>
