@@ -47,6 +47,58 @@
     : 'photo'
   );
 
+  const HOME = [-86.5861, 34.7304]; // Huntsville, AL
+
+  const COORDS = {
+    saudiarabia:    [46.6753, 24.7136],   // Riyadh
+    nepal:          [85.32,   27.72],     // Kathmandu
+    pennsylvinia:   [-77.2,   41.2],      // PA center
+    northcarolina:  [-79.0,   35.5],      // NC center
+    atlanta:        [-84.39,  33.75],
+    nashville:      [-86.78,  36.16],
+    texas:          [-99.0,   31.5],      // TX center
+    phoenixalabama: [-85.0,   32.47],     // Phenix City, AL
+    alabama:        [-86.79,  33.5],      // Alabama state-ish
+    huntsville:     HOME,
+  };
+
+  const LOCATION_LABELS = {
+    saudiarabia:    'Riyadh, Saudi Arabia',
+    nepal:          'Kathmandu, Nepal',
+    pennsylvinia:   'Pennsylvania, USA',
+    northcarolina:  'North Carolina, USA',
+    atlanta:        'Atlanta, GA',
+    nashville:      'Nashville, TN',
+    texas:          'Texas, USA',
+    phoenixalabama: 'Phenix City, AL',
+    alabama:        'Alabama, USA',
+    huntsville:     'Huntsville, AL',
+  };
+
+  // Equirectangular projection on a 1000x500 viewBox.
+  // Returns CSS transform that centers (lng,lat) in a 100% panel at given zoom.
+  function flyTransform(coords, zoom = 1) {
+    if (!coords) return 'translate(0, 0) scale(1)';
+    const [lng, lat] = coords;
+    // Coords on the SVG (origin top-left, 0..1000 / 0..500):
+    const x = (lng + 180) / 360 * 1000;
+    const y = (90 - lat) / 180 * 500;
+    // We want (x, y) at the panel center after scaling.
+    // Center of the unscaled map is (500, 250).
+    const dx = (500 - x) * zoom;
+    const dy = (250 - y) * zoom;
+    return `translate(${dx / 10}%, ${dy / 5}%) scale(${zoom})`;
+  }
+
+  const mapTransform = $derived.by(() => {
+    const step = steps[activeIndex];
+    if (!step) return flyTransform(null, 1);
+    if (step.kind === 'map-intro') return flyTransform([0, 20], 1);
+    if (step.kind === 'video') return flyTransform(COORDS[step.locationKey] ?? null, step.zoom ?? 6);
+    if (step.kind === 'map-home') return flyTransform(HOME, 11);
+    return flyTransform(null, 1);
+  });
+
   let examIdx = $state(0);
   let examTimer = null;
 
@@ -171,8 +223,21 @@
         </div>
       </div>
       <div class="panel" class:visible={activePanel === 'map'}>
-        <!-- World map filled in Task 8 -->
-        <div class="placeholder">WORLD MAP</div>
+        <div class="map-frame">
+          <img
+            class="world-map"
+            src={worldMap}
+            alt="World map"
+            style="transform: {mapTransform};"
+          />
+          {#if steps[activeIndex]?.kind === 'video' || steps[activeIndex]?.kind === 'map-home'}
+            <div class="map-pin">📍</div>
+            <div class="map-label">
+              <strong>{steps[activeIndex]?.name ?? ''}</strong>
+              <span>{LOCATION_LABELS[steps[activeIndex]?.locationKey] ?? ''}</span>
+            </div>
+          {/if}
+        </div>
       </div>
       <div class="panel" class:visible={activePanel === 'ending'}>
         <!-- Party card filled in Task 11 -->
@@ -554,5 +619,66 @@
     0% { transform: translate(0, 0) rotate(-4deg); }
     50% { transform: translate(60vw, -40px) rotate(6deg); }
     100% { transform: translate(140vw, 30px) rotate(-2deg); }
+  }
+
+  /* Map panel */
+  .map-frame {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--bg-color);
+  }
+
+  .world-map {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 1;
+    margin-top: -25%;
+    margin-left: -50%;
+    color: var(--accent-color);
+    transition: transform 1.8s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+  }
+
+  .map-pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    font-size: 3rem;
+    z-index: 2;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    animation: pin-bob 2.4s ease-in-out infinite;
+  }
+  @keyframes pin-bob {
+    0%, 100% { transform: translate(-50%, -100%) translateY(0); }
+    50% { transform: translate(-50%, -100%) translateY(-8px); }
+  }
+
+  .map-label {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 18px;
+    text-align: center;
+    z-index: 2;
+    box-shadow: 3px 4px 12px rgba(0,0,0,0.18);
+  }
+  .map-label strong {
+    display: block;
+    color: var(--accent-color);
+    font-size: 1.3rem;
+  }
+  .map-label span {
+    display: block;
+    color: var(--text-color);
+    font-size: 0.95rem;
   }
 </style>
