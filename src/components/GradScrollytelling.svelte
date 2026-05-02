@@ -12,6 +12,55 @@
   let inView = $state(true);
   let rootEl;
   let storyEl;
+
+  let autoplay = $state(false);
+  let autoplayTimer = null;
+  let autoplayCancelled = $state(false);
+
+  function clearAutoplayTimer() {
+    if (autoplayTimer) {
+      clearTimeout(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+
+  function scheduleAutoplayAdvance() {
+    clearAutoplayTimer();
+    if (!autoplay) return;
+    if (activeIndex >= steps.length - 1) {
+      autoplay = false;
+      return;
+    }
+    const step = steps[activeIndex];
+    const advance = () => {
+      const next = storyEl?.querySelectorAll('.step')[activeIndex + 1];
+      if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    if (step.duration === 'video-end') {
+      // Video onended will schedule advance; fallback timer 30s
+      autoplayTimer = setTimeout(advance, 30000);
+    } else {
+      autoplayTimer = setTimeout(advance, step.duration ?? 5000);
+    }
+  }
+
+  $effect(() => {
+    if (autoplay && !autoplayCancelled) {
+      scheduleAutoplayAdvance();
+    } else {
+      clearAutoplayTimer();
+    }
+  });
+
+  function startAutoplay() {
+    autoplayCancelled = false;
+    autoplay = true;
+  }
+  function stopAutoplay() {
+    autoplay = false;
+    autoplayCancelled = true;
+    clearAutoplayTimer();
+  }
   let backHref = $state('/');
 
   const base = import.meta.env.BASE_URL || '';
@@ -211,15 +260,49 @@
     );
     rootObserver.observe(rootEl);
 
+    function onUserScroll() {
+      if (autoplay) stopAutoplay();
+    }
+    window.addEventListener('wheel', onUserScroll, { passive: true });
+    window.addEventListener('touchstart', onUserScroll, { passive: true });
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowDown','ArrowUp','PageDown','PageUp','Space','Home','End'].includes(e.code)) {
+        onUserScroll();
+      }
+    });
+
     return () => {
       stepObserver.disconnect();
       rootObserver.disconnect();
+      window.removeEventListener('wheel', onUserScroll);
+      window.removeEventListener('touchstart', onUserScroll);
+      clearAutoplayTimer();
     };
   });
 </script>
 
 <div class="scrollytelling" bind:this={rootEl}>
   <a class="back-link" class:hidden={!inView} href={backHref} onclick={handleBack}>&lt;&lt; go back</a>
+
+  <button
+    class="play-button"
+    class:hidden={!inView}
+    class:playing={autoplay}
+    type="button"
+    onclick={() => {
+      if (autoplay) {
+        stopAutoplay();
+      } else if (activeIndex >= steps.length - 1) {
+        const first = storyEl?.querySelectorAll('.step')[0];
+        if (first) first.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => startAutoplay(), 600);
+      } else {
+        startAutoplay();
+      }
+    }}
+  >
+    {#if autoplay}⏸ pause{:else if activeIndex >= steps.length - 1}↻ replay{:else}▶ play{/if}
+  </button>
 
   <div class="progress-indicator" class:hidden={!inView}>
     {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
@@ -294,7 +377,12 @@
                   muted={videoMuted}
                   playsinline
                   preload="metadata"
-                  onended={() => { /* hooked up to autoplay-advance in Task 10 */ }}
+                  onended={() => {
+                    if (autoplay) {
+                      const next = storyEl?.querySelectorAll('.step')[activeIndex + 1];
+                      if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }}
                 ></video>
                 <button class="mute-toggle" type="button" onclick={toggleMute}>
                   {videoMuted ? '🔇 unmute' : '🔊 mute'}
@@ -896,5 +984,27 @@
     font-style: italic;
     color: var(--accent-color);
     background: var(--bg-color);
+  }
+
+  .play-button {
+    position: fixed;
+    top: 6rem;
+    left: 1rem;
+    z-index: 21;
+    background: var(--accent-color);
+    color: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 18px;
+    font: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 3px 4px 12px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease, transform 0.2s ease;
+  }
+  .play-button:hover { transform: translateY(-1px); }
+  .play-button.playing {
+    background: var(--bg-color);
+    color: var(--accent-color);
   }
 </style>
