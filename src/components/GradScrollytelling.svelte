@@ -75,6 +75,17 @@
     huntsville:     'Huntsville, AL',
   };
 
+  const BLOOPERS = [
+    '/squiggly-lines/videos/CHG Videos/bloopers/Mamu&DaddyBloopers.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/Mamu&DaddyBloopers1.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/Mamu&DaddyBloopers2.mp4',
+    '/squiggly-lines/videos/CHG Videos/bloopers/Mom&Addison2.mp4',
+  ];
+
+  const showBlooper = $derived(MAP_KINDS.has(activeKind));
+  const blooperIdx = $derived(activeIndex % BLOOPERS.length);
+  const blooperDimmed = $derived(activeKind === 'video');
+
   // Equirectangular projection on a 1000x500 viewBox.
   // Returns CSS transform that centers (lng,lat) in a 100% panel at given zoom.
   function flyTransform(coords, zoom = 1) {
@@ -296,6 +307,21 @@
       {/each}
     </div>
   </div>
+
+  {#if showBlooper && inView}
+    {#key blooperIdx}
+      <video
+        class="blooper-pip"
+        class:dim={blooperDimmed}
+        src={BLOOPERS[blooperIdx]}
+        muted
+        autoplay
+        loop
+        playsinline
+        preload="metadata"
+      ></video>
+    {/key}
+  {/if}
 </div>
 
 <style>
@@ -754,5 +780,32 @@
   .mute-toggle:hover {
     background: var(--accent-color);
     color: var(--bg-color);
+  }
+
+  .blooper-pip {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 240px;
+    height: 180px;
+    object-fit: cover;
+    border: 4px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 4px 6px 18px rgba(0,0,0,0.3);
+    transform: rotate(2deg);
+    background: #000;
+    z-index: 25;
+    transition: opacity 0.4s ease;
+    opacity: 1;
+  }
+  .blooper-pip.dim { opacity: 0.3; }
+
+  @media (max-width: 780px) {
+    .blooper-pip {
+      width: 160px;
+      height: 120px;
+      bottom: 0.5rem;
+      right: 0.5rem;
+    }
   }
 </style>
