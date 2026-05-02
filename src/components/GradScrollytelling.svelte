@@ -47,6 +47,28 @@
     : 'photo'
   );
 
+  let examIdx = $state(0);
+  let examTimer = null;
+
+  $effect(() => {
+    if (examTimer) {
+      clearInterval(examTimer);
+      examTimer = null;
+    }
+    examIdx = 0;
+    if (activeKind === 'late-nights') {
+      const list = steps[activeIndex]?.examBubbles ?? [];
+      if (list.length > 1) {
+        examTimer = setInterval(() => {
+          examIdx = (examIdx + 1) % list.length;
+        }, 1600);
+      }
+    }
+    return () => {
+      if (examTimer) clearInterval(examTimer);
+    };
+  });
+
   function mdInline(text) {
     if (!text) return '';
     let s = String(text)
@@ -113,8 +135,40 @@
   <div class="grid">
     <div class="visual-side">
       <div class="panel" class:visible={activePanel === 'photo'}>
-        <!-- Photo stage filled in Task 5 -->
-        <div class="placeholder">PHOTO STAGE</div>
+        <div
+          class="photo-stage"
+          class:cap={['intro-skit-cap','intro-skit-gown','intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
+          class:gown={['intro-skit-gown','intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
+          class:degree={['intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
+          class:tears={activeKind === 'late-nights'}
+          class:flying={activeKind === 'flying-colors'}
+        >
+          <img class="caden-img" src={activeKind === 'flying-colors' ? cadenTriumphantPhoto : cadenPhoto} alt="Caden" />
+
+          <div class="overlay cap-overlay">🎓</div>
+          <div class="overlay gown-overlay">🥋</div>
+          <div class="overlay degree-overlay">
+            <div class="frame">
+              <div class="parchment">M.S.<br/>Computer<br/>Science</div>
+            </div>
+          </div>
+
+          <div class="overlay tear left">💧</div>
+          <div class="overlay tear right">💧</div>
+          <div class="overlay exam-bubble">
+            <span class="bubble-text">{steps[activeIndex]?.examBubbles?.[examIdx] ?? ''}</span>
+          </div>
+
+          <div class="flying-stage">
+            {#each ['#ff6b6b','#feca57','#48dbfb','#1dd1a1','#5f27cd','#ff9ff3','#54a0ff','#ee5253'] as color, i}
+              <div class="winged-square" style="--c: {color}; --i: {i};">
+                <span class="wing left">🪽</span>
+                <span class="square" style="background: {color}"></span>
+                <span class="wing right">🪽</span>
+              </div>
+            {/each}
+          </div>
+        </div>
       </div>
       <div class="panel" class:visible={activePanel === 'map'}>
         <!-- World map filled in Task 8 -->
@@ -316,5 +370,189 @@
     .step { min-height: 65vh; }
     .bubble { max-width: 100%; }
     .progress-bar { height: 30vh; }
+  }
+
+  .photo-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .caden-img {
+    max-height: 90%;
+    max-width: 60%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 4px 6px 18px rgba(0, 0, 0, 0.22);
+    transition: opacity 0.5s ease;
+  }
+
+  .overlay {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  /* Cap */
+  .cap-overlay {
+    font-size: 8rem;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-150%);
+  }
+  .photo-stage.cap .cap-overlay {
+    opacity: 1;
+    animation: cap-drop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes cap-drop {
+    0% { transform: translateX(-50%) translateY(-150%) rotate(-30deg); }
+    60% { transform: translateX(-50%) translateY(10%) rotate(8deg); }
+    100% { transform: translateX(-50%) translateY(-2%) rotate(-3deg); }
+  }
+
+  /* Gown */
+  .gown-overlay {
+    font-size: 16rem;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%) scaleY(0.7);
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));
+  }
+  .photo-stage.gown .gown-overlay {
+    opacity: 0.9;
+    animation: gown-fade 0.7s ease forwards;
+  }
+  @keyframes gown-fade {
+    from { opacity: 0; transform: translateX(-50%) scaleY(0.7); }
+    to   { opacity: 0.9; transform: translateX(-50%) scaleY(1); }
+  }
+
+  /* Degree */
+  .degree-overlay {
+    bottom: 4%;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%) rotate(-4deg);
+  }
+  .photo-stage.degree .degree-overlay {
+    opacity: 1;
+    animation: degree-thud 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes degree-thud {
+    0% { transform: translateX(-50%) translateY(120%) rotate(-12deg); }
+    70% { transform: translateX(-50%) translateY(-6%) rotate(2deg); }
+    100% { transform: translateX(-50%) translateY(0) rotate(-4deg); }
+  }
+  .frame {
+    width: 280px;
+    height: 200px;
+    background: #d4a574;
+    border: 8px solid #6b3410;
+    box-shadow: 6px 8px 22px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .parchment {
+    background: #f8e9c1;
+    width: 90%;
+    height: 88%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Times New Roman', serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    color: #3a1d05;
+  }
+
+  /* Tears + exam bubble (late-nights) */
+  .tear {
+    font-size: 3rem;
+    top: 30%;
+  }
+  .tear.left  { left: calc(50% - 80px); }
+  .tear.right { left: calc(50% + 50px); }
+  .photo-stage.tears .tear {
+    opacity: 1;
+    animation: tear-drip 1.2s ease-in infinite;
+  }
+  @keyframes tear-drip {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(120px); opacity: 0; }
+  }
+
+  .exam-bubble {
+    top: 18%;
+    right: 6%;
+    background: var(--bg-color);
+    border: 3px solid var(--border-color);
+    border-radius: 18px;
+    padding: 14px 20px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    max-width: 280px;
+    transform: rotate(4deg);
+  }
+  .exam-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 30px;
+    width: 0; height: 0;
+    border: 12px solid transparent;
+    border-top-color: var(--bg-color);
+  }
+  .photo-stage.tears .exam-bubble {
+    opacity: 1;
+    animation: bubble-flicker 1.6s ease-in-out infinite;
+  }
+  @keyframes bubble-flicker {
+    0%, 100% { transform: rotate(4deg) scale(1); }
+    10% { transform: rotate(4deg) scale(1.06); }
+    50% { transform: rotate(2deg) scale(0.98); }
+  }
+
+  /* Flying colors */
+  .flying-stage {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .photo-stage.flying .flying-stage { opacity: 1; }
+
+  .winged-square {
+    position: absolute;
+    top: calc(15% + var(--i) * 10%);
+    left: -20%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation: wing-fly 2.6s ease-in forwards;
+    animation-delay: calc(var(--i) * 0.18s);
+    opacity: 0;
+  }
+  .photo-stage.flying .winged-square { opacity: 1; }
+  .square {
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+    border: 2px solid rgba(0,0,0,0.6);
+    box-shadow: 2px 3px 0 rgba(0,0,0,0.4);
+  }
+  .wing { font-size: 1.6rem; }
+  .wing.left  { transform: scaleX(-1); }
+  @keyframes wing-fly {
+    0% { transform: translate(0, 0) rotate(-4deg); }
+    50% { transform: translate(60vw, -40px) rotate(6deg); }
+    100% { transform: translate(140vw, 30px) rotate(-2deg); }
   }
 </style>
