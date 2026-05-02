@@ -11,3 +11,6 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Compressed video originals (kept locally, never deployed)
+public/videos/CHG Videos/.originals/
