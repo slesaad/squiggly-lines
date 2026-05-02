@@ -30,6 +30,23 @@
     }
   }
 
+  const PHOTO_KINDS = new Set([
+    'intro-greeting', 'intro-skit-cap', 'intro-skit-gown', 'intro-skit-degree',
+    'late-nights', 'flying-colors',
+  ]);
+  const MAP_KINDS = new Set(['map-intro', 'video', 'map-home']);
+  const ENDING_KINDS = new Set(['ending']);
+  const OUTTAKES_KINDS = new Set(['outtakes']);
+
+  const activeKind = $derived(steps[activeIndex]?.kind ?? 'intro-greeting');
+  const activePanel = $derived(
+    PHOTO_KINDS.has(activeKind) ? 'photo'
+    : MAP_KINDS.has(activeKind) ? 'map'
+    : ENDING_KINDS.has(activeKind) ? 'ending'
+    : OUTTAKES_KINDS.has(activeKind) ? 'outtakes'
+    : 'photo'
+  );
+
   function mdInline(text) {
     if (!text) return '';
     let s = String(text)
@@ -95,8 +112,22 @@
 
   <div class="grid">
     <div class="visual-side">
-      <!-- Visual panels added in Task 4 -->
-      <div class="debug-active">step {activeIndex + 1} / {steps.length} — kind: {steps[activeIndex]?.kind}</div>
+      <div class="panel" class:visible={activePanel === 'photo'}>
+        <!-- Photo stage filled in Task 5 -->
+        <div class="placeholder">PHOTO STAGE</div>
+      </div>
+      <div class="panel" class:visible={activePanel === 'map'}>
+        <!-- World map filled in Task 8 -->
+        <div class="placeholder">WORLD MAP</div>
+      </div>
+      <div class="panel" class:visible={activePanel === 'ending'}>
+        <!-- Party card filled in Task 11 -->
+        <div class="placeholder">PARTY CARD</div>
+      </div>
+      <div class="panel" class:visible={activePanel === 'outtakes'}>
+        <!-- Outtakes reel filled in Task 11 -->
+        <div class="placeholder">OUTTAKES REEL</div>
+      </div>
     </div>
 
     <div class="story-side" bind:this={storyEl}>
@@ -189,18 +220,28 @@
     background: var(--bg-color);
   }
 
-  .debug-active {
+  .panel {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    color: var(--accent-color);
-    font-size: 14px;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  .panel.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-family: monospace;
-    background: var(--bg-color);
-    padding: 4px 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
-    z-index: 5;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    border: 1px dashed var(--border-color);
+    padding: 1rem 2rem;
   }
 
   .story-side {
