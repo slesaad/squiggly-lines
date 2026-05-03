@@ -141,6 +141,7 @@
   let videoCardReady = $state(false);
   let allMarkers = new Map(); // locationKey -> L.Marker (persistent)
   let prevActiveIndex = -1;
+  let autoAdvancedFrom = new Set(); // step indices we've already auto-advanced from
 
   function leafletTargetForStep(step) {
     if (!step) return null;
@@ -192,9 +193,21 @@
     }
 
     // Otherwise fly, then reveal video on moveend.
+    const settledIndex = activeIndex;
     const onMoveEnd = () => {
       leafletMap.off('moveend', onMoveEnd);
       if (step.kind === 'video') videoCardReady = true;
+      // After landing in Huntsville, auto-advance to the surprise-party
+      // step so the user doesn't have to scroll. Only do it once per
+      // visit (so scrolling back doesn't trap them in a loop).
+      if (step.kind === 'map-home' && !autoAdvancedFrom.has(settledIndex)) {
+        autoAdvancedFrom.add(settledIndex);
+        setTimeout(() => {
+          if (activeIndex !== settledIndex) return; // user moved on already
+          const next = storyEl?.querySelectorAll('.step')[settledIndex + 1];
+          if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1200);
+      }
     };
     leafletMap.on('moveend', onMoveEnd);
 
@@ -420,6 +433,7 @@
       }
       allMarkers.clear();
       prevActiveIndex = -1;
+      autoAdvancedFrom.clear();
     };
   });
 </script>
