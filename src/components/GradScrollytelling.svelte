@@ -858,25 +858,29 @@
     font-size: 0.95rem;
   }
 
-  /* Video card overlay */
+  /* Video card overlay — front-and-center, dominates the panel */
   .video-card {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-1.5deg);
-    width: min(50vw, 540px);
-    max-height: 70vh;
+    transform: translate(-50%, -50%);
+    width: 92%;
+    height: 88%;
     background: var(--bg-color);
     border: 6px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 8px 10px 30px rgba(0, 0, 0, 0.35);
+    border-radius: 6px;
+    box-shadow: 10px 12px 36px rgba(0, 0, 0, 0.4);
     z-index: 3;
-    padding: 8px 8px 36px;
+    padding: 10px 10px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .video-card video {
     width: 100%;
-    max-height: 60vh;
+    height: 100%;
     display: block;
+    object-fit: contain;
     background: #000;
   }
   .mute-toggle {
@@ -923,11 +927,9 @@
     }
 
     .video-card {
-      width: 90vw;
-      max-height: 50vh;
-    }
-    .video-card video {
-      max-height: 42vh;
+      width: 94%;
+      height: 92%;
+      padding: 6px 6px 32px;
     }
 
     .photo-stage .cap-overlay { font-size: 5rem; }
