@@ -138,7 +138,7 @@
 
   function leafletTargetForStep(step) {
     if (!step) return null;
-    if (step.kind === 'map-intro') return { center: [20, 0], zoom: 2 };
+    if (step.kind === 'map-intro') return { center: [25, 0], zoom: 3 };
     if (step.kind === 'video') {
       const c = COORDS[step.locationKey];
       if (!c) return null;
@@ -338,7 +338,7 @@
         keyboard: false,
         zoomAnimation: true,
         worldCopyJump: false,
-      }).setView([20, 0], 2);
+      }).setView([25, 0], 3);
 
       L.tileLayer(
         'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
