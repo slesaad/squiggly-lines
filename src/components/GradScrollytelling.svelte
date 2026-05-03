@@ -869,21 +869,27 @@
      caden-flying.jpg, so cap and frame need to land in different
      spots than they do over caden.jpg. Tune freely. */
   .photo-stage.flying .cap-overlay {
-    font-size: 14rem;     /* cap emoji size for this scene */
-    top: 15%;
-    left: 45%;
+    font-size: 6rem;     /* cap emoji size for this scene */
+    top: 13%;
+    left: 47%;
     animation: none;
     transform: translateX(-50%) translateY(-2%) rotate(-3deg);
   }
   .photo-stage.flying .degree-overlay {
-    bottom: 4%;
-    left: 50%;
+    /* Use only TOP and LEFT to position the frame's TOP-LEFT corner.
+       0% left = panel left edge, 100% left = panel right edge.
+       (We dropped translateX(-50%) which was a centering trick that
+       broke when switching to `right`.) */
+    top: 30%;
+    left: 5%;
+    bottom: auto;
+    right: auto;
     animation: none;
-    transform: translateX(-50%) translateY(0) rotate(-4deg);
+    transform: rotate(-4deg);
   }
   .photo-stage.flying .frame {
-    width: 280px;          /* frame box width for this scene */
-    height: 200px;         /* frame box height for this scene */
+    width: 180px;          /* frame box width for this scene */
+    height: 100px;         /* frame box height for this scene */
   }
   .photo-stage.flying .parchment {
     font-size: 1.4rem;     /* "M.S. Computer Science" text size */
