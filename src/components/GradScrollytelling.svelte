@@ -557,12 +557,6 @@
       <div class="panel map-panel" class:visible={activePanel === 'map'}>
         <div class="map-frame">
           <div class="leaflet-host" bind:this={mapContainerEl}></div>
-          {#if steps[activeIndex]?.kind === 'video' || steps[activeIndex]?.kind === 'map-home'}
-            <div class="map-label">
-              <strong>{steps[activeIndex]?.name ?? ''}</strong>
-              <span>{LOCATION_LABELS[steps[activeIndex]?.locationKey] ?? ''}</span>
-            </div>
-          {/if}
           {#if steps[activeIndex]?.kind === 'video' && steps[activeIndex]?.src && videoCardReady}
             {#key activeIndex}
               <div class="video-card">
@@ -624,7 +618,16 @@
     <div class="story-side" bind:this={storyEl}>
       {#each steps as step, i}
         <section class="step" data-index={i} class:active={i === activeIndex}>
-          {#if step.caption}
+          {#if (step.kind === 'video' || step.kind === 'map-home') && step.name && step.locationKey}
+            <div class="bubble">
+              <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="bubble-name">{step.name}</span>
+              <div class="bubble-location">{LOCATION_LABELS[step.locationKey] ?? ''}</div>
+              {#if !step.src && step.kind === 'video'}
+                <div class="bubble-subnote">(video on the way…)</div>
+              {/if}
+            </div>
+          {:else if step.caption}
             <div class="bubble">
               <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
               <p>{@html mdInline(step.caption)}</p>
@@ -792,6 +795,28 @@
     font-size: 1.85rem;
     color: var(--text-color);
     line-height: 1.45;
+  }
+
+  .bubble-name {
+    display: inline;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    line-height: 1;
+    vertical-align: middle;
+  }
+  .bubble-location {
+    margin-top: 0.5rem;
+    font-size: 1.3rem;
+    color: var(--text-color);
+    line-height: 1.3;
+  }
+  .bubble-subnote {
+    margin-top: 0.4rem;
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.65;
+    font-style: italic;
   }
   .bubble p :global(strong) {
     color: var(--accent-color);
@@ -1070,30 +1095,6 @@
   @keyframes pin-bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
-  }
-
-  .map-label {
-    position: absolute;
-    bottom: 4%;
-    left: 50%;
-    transform: translateX(-50%) rotate(-1deg);
-    background: var(--bg-color);
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 18px;
-    text-align: center;
-    z-index: 1100;
-    box-shadow: 3px 4px 12px rgba(0,0,0,0.18);
-  }
-  .map-label strong {
-    display: block;
-    color: var(--accent-color);
-    font-size: 1.3rem;
-  }
-  .map-label span {
-    display: block;
-    color: var(--text-color);
-    font-size: 0.95rem;
   }
 
   /* Video card overlay — front-and-center, dominates the panel */
