@@ -979,20 +979,28 @@
 
   .winged-square {
     position: absolute;
-    top: calc(15% + var(--i) * 10%);
-    left: 0;
     display: flex;
     align-items: center;
     gap: 4px;
-    /* Negative animation-delay staggers each square permanently — square i
-       starts at i/8 of the way through the loop, so a fresh square is
-       always entering from the left. Infinite means it keeps flowing as
-       long as the user lingers on the flying-colors step. */
-    animation: wing-fly 6s linear infinite;
-    animation-delay: calc(var(--i) * -0.75s);
+    /* Each square hovers in its own spot and bobs up/down like a bird.
+       Negative animation-delay puts each on a different phase so they
+       don't all flap in sync. */
+    animation: bird-bob 1.8s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -0.22s);
     opacity: 0;
   }
   .photo-stage.flying .winged-square { opacity: 1; }
+  /* Hand-placed positions — 4 birds in the upper half, 4 in the lower,
+     with small horizontal jitter. Tweak any of these freely. */
+  .winged-square:nth-child(1) { left: 8%;  top: 18%; }
+  .winged-square:nth-child(2) { left: 30%; top: 26%; }
+  .winged-square:nth-child(3) { left: 56%; top: 14%; }
+  .winged-square:nth-child(4) { left: 78%; top: 24%; }
+  .winged-square:nth-child(5) { left: 12%; top: 62%; }
+  .winged-square:nth-child(6) { left: 36%; top: 72%; }
+  .winged-square:nth-child(7) { left: 60%; top: 64%; }
+  .winged-square:nth-child(8) { left: 82%; top: 74%; }
+
   .square {
     width: 36px;
     height: 36px;
@@ -1000,12 +1008,14 @@
     border: 2px solid rgba(0,0,0,0.6);
     box-shadow: 2px 3px 0 rgba(0,0,0,0.4);
   }
-  .wing { font-size: 1.6rem; }
+  .wing { font-size: 1.6rem; transition: transform 0.18s ease; }
   .wing.left  { transform: scaleX(-1); }
-  @keyframes wing-fly {
-    0%   { transform: translate(-30vw, 0) rotate(-4deg); }
-    50%  { transform: translate(50vw, -20px) rotate(4deg); }
-    100% { transform: translate(130vw, 0) rotate(-4deg); }
+
+  @keyframes bird-bob {
+    0%, 100% { transform: translateY(0)    rotate(-4deg); }
+    25%      { transform: translateY(-18px) rotate(3deg); }
+    50%      { transform: translateY(-30px) rotate(5deg); }
+    75%      { transform: translateY(-12px) rotate(-2deg); }
   }
 
   /* Map panel */
