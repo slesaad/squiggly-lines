@@ -97,31 +97,35 @@
 
   const HOME = [-86.5861, 34.7304]; // Huntsville, AL
 
+  // All city centers — kept consistent so every fly lands the same way.
   const COORDS = {
     saudiarabia:    [46.6753, 24.7136],   // Riyadh
-    nepal:          [85.32,   27.72],     // Kathmandu
-    pennsylvinia:   [-77.2,   41.2],      // PA center
-    northcarolina:  [-79.0,   35.5],      // NC center
-    atlanta:        [-84.39,  33.75],
-    nashville:      [-86.78,  36.16],
-    texas:          [-99.0,   31.5],      // TX center
-    phoenixalabama: [-85.0,   32.47],     // Phenix City, AL
-    alabama:        [-86.79,  33.5],      // Alabama state-ish
+    nepal:          [85.3240, 27.7172],   // Kathmandu
+    pennsylvinia:   [-75.1652, 39.9526],  // Philadelphia
+    northcarolina:  [-78.6382, 35.7796],  // Raleigh
+    atlanta:        [-84.3880, 33.7490],  // Atlanta
+    nashville:      [-86.7816, 36.1627],  // Nashville
+    texas:          [-97.7431, 30.2672],  // Austin
+    phoenixalabama: [-85.0008, 32.4709],  // Phenix City
+    alabama:        [-86.8025, 33.5186],  // Birmingham
     huntsville:     HOME,
   };
 
   const LOCATION_LABELS = {
     saudiarabia:    'Riyadh, Saudi Arabia',
-    nepal:          'Kathmandu, Nepal',
-    pennsylvinia:   'Pennsylvania, USA',
-    northcarolina:  'North Carolina, USA',
-    atlanta:        'Atlanta, GA',
-    nashville:      'Nashville, TN',
-    texas:          'Texas, USA',
-    phoenixalabama: 'Phenix City, AL',
-    alabama:        'Alabama, USA',
-    huntsville:     'Huntsville, AL',
+    nepal:           'Kathmandu, Nepal',
+    pennsylvinia:    'Philadelphia, PA',
+    northcarolina:   'Raleigh, NC',
+    atlanta:         'Atlanta, GA',
+    nashville:       'Nashville, TN',
+    texas:           'Austin, TX',
+    phoenixalabama:  'Phenix City, AL',
+    alabama:         'Birmingham, AL',
+    huntsville:      'Huntsville, AL',
   };
+
+  // Single source of truth for video-step zoom — keeps every fly identical.
+  const VIDEO_ZOOM = 6;
 
   const BLOOPERS = [
     '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers.mp4',
@@ -143,7 +147,7 @@
     if (step.kind === 'video') {
       const c = COORDS[step.locationKey];
       if (!c) return null;
-      return { center: [c[1], c[0]], zoom: step.zoom ?? 6 };
+      return { center: [c[1], c[0]], zoom: VIDEO_ZOOM };
     }
     if (step.kind === 'map-home') {
       return { center: [HOME[1], HOME[0]], zoom: 11 };
