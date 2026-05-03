@@ -869,6 +869,7 @@
      caden-flying.jpg, so cap and frame need to land in different
      spots than they do over caden.jpg. Tune freely. */
   .photo-stage.flying .cap-overlay {
+    font-size: 14rem;     /* cap emoji size for this scene */
     top: 15%;
     left: 45%;
     animation: none;
@@ -879,6 +880,13 @@
     left: 50%;
     animation: none;
     transform: translateX(-50%) translateY(0) rotate(-4deg);
+  }
+  .photo-stage.flying .frame {
+    width: 280px;          /* frame box width for this scene */
+    height: 200px;         /* frame box height for this scene */
+  }
+  .photo-stage.flying .parchment {
+    font-size: 1.4rem;     /* "M.S. Computer Science" text size */
   }
   .frame {
     width: 280px;
