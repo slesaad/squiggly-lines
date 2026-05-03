@@ -139,7 +139,8 @@
   let leafletMap = null;
   let leafletReady = $state(false);
   let videoCardReady = $state(false);
-  let activeMarker = null;
+  let allMarkers = new Map(); // locationKey -> L.Marker (persistent)
+  let prevActiveIndex = -1;
 
   function leafletTargetForStep(step) {
     if (!step) return null;
@@ -155,35 +156,42 @@
     return null;
   }
 
+  function setActiveMarker(key) {
+    for (const [k, m] of allMarkers) {
+      const el = m.getElement();
+      if (el) el.classList.toggle('active', k === key);
+    }
+  }
+
   $effect(() => {
     if (!leafletReady || !leafletMap) return;
     const step = steps[activeIndex];
+    const prevStep = prevActiveIndex >= 0 ? steps[prevActiveIndex] : null;
+    prevActiveIndex = activeIndex;
+
     const target = leafletTargetForStep(step);
 
-    // Reset video visibility for every step entry.
-    videoCardReady = false;
+    // Highlight the active marker (persistent markers stay shown either way).
+    setActiveMarker(step?.locationKey ?? null);
 
-    // Drop any existing marker.
-    if (activeMarker) {
-      leafletMap.removeLayer(activeMarker);
-      activeMarker = null;
-    }
+    // Hide any current video card while the map transitions.
+    videoCardReady = false;
 
     if (!target) return;
 
-    // Drop a marker for video / map-home steps.
-    const L = window.L;
-    if (L && (step.kind === 'video' || step.kind === 'map-home')) {
-      const icon = L.divIcon({
-        className: 'grad-marker',
-        html: '📍',
-        iconSize: [44, 44],
-        iconAnchor: [22, 40],
-      });
-      activeMarker = L.marker(target.center, { icon, interactive: false }).addTo(leafletMap);
+    // Same location as the previous video step → don't move the map,
+    // just pop the next video card in.
+    const sameLocation =
+      step.kind === 'video' &&
+      prevStep?.kind === 'video' &&
+      step.locationKey === prevStep.locationKey;
+
+    if (sameLocation) {
+      requestAnimationFrame(() => { videoCardReady = true; });
+      return;
     }
 
-    // After the fly settles, reveal the video card.
+    // Otherwise fly, then reveal video on moveend.
     const onMoveEnd = () => {
       leafletMap.off('moveend', onMoveEnd);
       if (step.kind === 'video') videoCardReady = true;
@@ -335,6 +343,30 @@
         },
       ).addTo(leafletMap);
 
+      // Build persistent markers, one per unique location, with the
+      // names of every contributor at that location.
+      const namesByKey = new Map();
+      for (const s of steps) {
+        if ((s.kind === 'video' || s.kind === 'map-home') && s.locationKey && COORDS[s.locationKey]) {
+          if (!namesByKey.has(s.locationKey)) namesByKey.set(s.locationKey, []);
+          namesByKey.get(s.locationKey).push(s.name ?? '');
+        }
+      }
+      for (const [key, names] of namesByKey) {
+        const c = COORDS[key];
+        if (!c) continue;
+        const label = [...new Set(names.filter(Boolean))].join(' · ');
+        const html = `<span class="pin">📍</span><span class="name">${label}</span>`;
+        const icon = L.divIcon({
+          className: 'grad-marker',
+          html,
+          iconSize: [220, 48],
+          iconAnchor: [12, 44],
+        });
+        const m = L.marker([c[1], c[0]], { icon, interactive: false }).addTo(leafletMap);
+        allMarkers.set(key, m);
+      }
+
       // Force a tile recompute once the panel becomes visible.
       requestAnimationFrame(() => {
         leafletMap.invalidateSize();
@@ -386,6 +418,8 @@
         leafletMap = null;
         leafletReady = false;
       }
+      allMarkers.clear();
+      prevActiveIndex = -1;
     };
   });
 </script>
@@ -656,23 +690,23 @@
   .step {
     min-height: 100vh;
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    padding: 0 0 3.5rem 3rem;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
     pointer-events: none;
   }
 
   .bubble {
     pointer-events: auto;
     background: var(--bg-color);
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    padding: 1.25rem 1.75rem;
-    box-shadow: 3px 5px 18px rgba(0, 0, 0, 0.28);
+    border: 3px solid var(--border-color);
+    border-radius: 14px;
+    padding: 2rem 2.5rem;
+    box-shadow: 5px 8px 28px rgba(0, 0, 0, 0.32);
     transform: rotate(-0.6deg);
     transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.5s ease;
     opacity: 0;
-    max-width: 480px;
+    max-width: 760px;
   }
 
   .step:nth-child(even) .bubble { transform: rotate(0.5deg); }
@@ -680,24 +714,24 @@
   .step.active .bubble {
     opacity: 1;
     transform: rotate(0deg) scale(1.02);
-    box-shadow: 5px 8px 24px rgba(0, 0, 0, 0.32);
+    box-shadow: 6px 10px 32px rgba(0, 0, 0, 0.4);
   }
 
   .step-num {
     display: inline-block;
-    font-size: 2.2rem;
+    font-size: 3.2rem;
     font-weight: bold;
     color: var(--accent-color);
-    margin-right: 0.6rem;
+    margin-right: 0.8rem;
     line-height: 1;
     vertical-align: middle;
   }
 
   .bubble p {
     display: inline;
-    font-size: 1.3rem;
+    font-size: 1.85rem;
     color: var(--text-color);
-    line-height: 1.5;
+    line-height: 1.45;
   }
   .bubble p :global(strong) {
     color: var(--accent-color);
@@ -718,15 +752,17 @@
 
   @media (max-width: 780px) {
     .step {
-      padding: 0 1.25rem 5rem 1.25rem;
+      padding: 1.25rem;
     }
     .bubble {
       max-width: 100%;
-      padding: 1rem 1.25rem;
-      font-size: 1rem;
+      padding: 1.25rem 1.5rem;
     }
-    .bubble p { font-size: 1.05rem; }
+    .bubble p { font-size: 1.4rem; }
+    .step-num { font-size: 2.4rem; }
     .progress-bar { height: 30vh; }
+    :global(.grad-marker .name) { font-size: 0.7rem; }
+    :global(.grad-marker.active .name) { font-size: 0.9rem; }
   }
 
   .photo-stage {
@@ -934,14 +970,42 @@
     background: rgba(255, 255, 255, 0.85) !important;
   }
 
-  /* Custom Leaflet marker (DivIcon with 📍 emoji + bob animation) */
+  /* Custom Leaflet marker (📍 emoji + name label) */
   :global(.grad-marker) {
-    font-size: 2.5rem;
-    text-align: center;
-    line-height: 1;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
-    animation: pin-bob 2.4s ease-in-out infinite;
+    display: flex !important;
+    align-items: center;
     pointer-events: none;
+    white-space: nowrap;
+  }
+  :global(.grad-marker .pin) {
+    font-size: 1.4rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35));
+    transition: font-size 0.3s ease;
+  }
+  :global(.grad-marker .name) {
+    margin-left: 4px;
+    padding: 2px 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.18);
+    transition: all 0.3s ease;
+  }
+  :global(.grad-marker.active .pin) {
+    font-size: 2.4rem;
+    animation: pin-bob 1.8s ease-in-out infinite;
+  }
+  :global(.grad-marker.active .name) {
+    font-size: 1rem;
+    font-weight: 700;
+    background: var(--accent-color);
+    color: var(--bg-color);
+    border-color: var(--accent-color);
+    padding: 4px 12px;
   }
   @keyframes pin-bob {
     0%, 100% { transform: translateY(0); }
