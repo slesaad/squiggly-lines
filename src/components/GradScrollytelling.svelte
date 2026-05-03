@@ -84,14 +84,11 @@
   ]);
   const MAP_KINDS = new Set(['map-intro', 'video', 'map-home']);
   const ENDING_KINDS = new Set(['ending']);
-  const OUTTAKES_KINDS = new Set(['outtakes']);
-
   const activeKind = $derived(steps[activeIndex]?.kind ?? 'intro-greeting');
   const activePanel = $derived(
     PHOTO_KINDS.has(activeKind) ? 'photo'
     : MAP_KINDS.has(activeKind) ? 'map'
     : ENDING_KINDS.has(activeKind) ? 'ending'
-    : OUTTAKES_KINDS.has(activeKind) ? 'outtakes'
     : 'photo'
   );
 
@@ -128,13 +125,6 @@
 
   // Single source of truth for video-step zoom — keeps every fly identical.
   const VIDEO_ZOOM = 6;
-
-  const BLOOPERS = [
-    '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers.mp4',
-    '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers1.mp4',
-    '/squiggly-lines/videos/CHG Videos/bloopers/MamuDaddyBloopers2.mp4',
-    '/squiggly-lines/videos/CHG Videos/bloopers/MomAddison2.mp4',
-  ];
 
   // Leaflet map state. Initialized in onMount (browser-only).
   let mapContainerEl;
@@ -257,24 +247,6 @@
         videoMuted = true;
         v.play().catch(() => {});
       });
-    }
-  }
-
-  let outtakeIdx = $state(0);
-  let outtakeFin = $state(false);
-
-  $effect(() => {
-    if (activeKind === 'outtakes') {
-      outtakeIdx = 0;
-      outtakeFin = false;
-    }
-  });
-
-  function advanceOuttake() {
-    if (outtakeIdx < BLOOPERS.length - 1) {
-      outtakeIdx += 1;
-    } else {
-      outtakeFin = true;
     }
   }
 
@@ -592,26 +564,6 @@
             🎉
           </div>
         </div>
-      </div>
-      <div class="panel" class:visible={activePanel === 'outtakes'}>
-        {#if activePanel === 'outtakes'}
-          {#if outtakeFin}
-            <div class="fin-card">fin.</div>
-          {:else}
-            {#key outtakeIdx}
-              <video
-                class="outtake-reel"
-                src={BLOOPERS[outtakeIdx]}
-                muted={videoMuted}
-                autoplay
-                playsinline
-                preload="metadata"
-                onloadedmetadata={recoverFromAutoplayBlock}
-                onended={advanceOuttake}
-              ></video>
-            {/key}
-          {/if}
-        {/if}
       </div>
     </div>
 
@@ -1160,7 +1112,6 @@
     .exam-bubble { font-size: 1.1rem; right: 4%; max-width: 200px; }
     .placeholder-party { padding: 1.5rem 2rem; font-size: 1.1rem; }
     .placeholder-party strong { font-size: 1.5rem; }
-    .fin-card { font-size: 5rem; }
     .play-button { top: 5rem; }
   }
 
@@ -1194,27 +1145,6 @@
     opacity: 0.7;
   }
 
-  .outtake-reel {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    background: #000;
-  }
-
-  .fin-card {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Times New Roman', serif;
-    font-size: 8rem;
-    font-style: italic;
-    color: var(--accent-color);
-    background: var(--bg-color);
-  }
 
   .play-button {
     position: fixed;
