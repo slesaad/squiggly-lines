@@ -196,10 +196,26 @@
     });
   });
 
-  let videoMuted = $state(true);
+  let videoMuted = $state(false);
 
   function toggleMute() {
     videoMuted = !videoMuted;
+  }
+
+  // Browsers block unmuted autoplay until the user has interacted with
+  // the page. If the unmuted play() rejects, fall back to muted (and
+  // sync videoMuted so the toggle reflects reality).
+  function recoverFromAutoplayBlock(e) {
+    const v = e.currentTarget;
+    if (!v) return;
+    const p = v.play();
+    if (p && p.catch) {
+      p.catch(() => {
+        v.muted = true;
+        videoMuted = true;
+        v.play().catch(() => {});
+      });
+    }
   }
 
   let outtakeIdx = $state(0);
@@ -464,6 +480,7 @@
                   autoplay
                   playsinline
                   preload="auto"
+                  onloadedmetadata={recoverFromAutoplayBlock}
                   onended={() => {
                     if (autoplay) {
                       const next = storyEl?.querySelectorAll('.step')[activeIndex + 1];
@@ -499,9 +516,11 @@
               <video
                 class="outtake-reel"
                 src={BLOOPERS[outtakeIdx]}
+                muted={videoMuted}
                 autoplay
                 playsinline
                 preload="metadata"
+                onloadedmetadata={recoverFromAutoplayBlock}
                 onended={advanceOuttake}
               ></video>
             {/key}
