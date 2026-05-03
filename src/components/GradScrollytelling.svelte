@@ -99,20 +99,22 @@
 
   // All city centers — kept consistent so every fly lands the same way.
   const COORDS = {
-    saudiarabia:    [46.6753, 24.7136],   // Riyadh
-    nepal:          [85.3240, 27.7172],   // Kathmandu
-    pennsylvinia:   [-75.1652, 39.9526],  // Philadelphia
-    northcarolina:  [-78.6382, 35.7796],  // Raleigh
-    atlanta:        [-84.3880, 33.7490],  // Atlanta
-    nashville:      [-86.7816, 36.1627],  // Nashville
-    texas:          [-97.7431, 30.2672],  // Austin
-    phoenixalabama: [-85.0008, 32.4709],  // Phenix City
-    alabama:        [-86.8025, 33.5186],  // Birmingham
-    huntsville:     HOME,
+    australia:       [151.2093, -33.8688], // Sydney
+    saudiarabia:     [46.6753, 24.7136],   // Riyadh
+    nepal:           [85.3240, 27.7172],   // Kathmandu
+    pennsylvinia:    [-75.1652, 39.9526],  // Philadelphia
+    northcarolina:   [-78.6382, 35.7796],  // Raleigh
+    atlanta:         [-84.3880, 33.7490],  // Atlanta
+    nashville:       [-86.7816, 36.1627],  // Nashville
+    texas:           [-97.7431, 30.2672],  // Austin
+    phoenixalabama:  [-85.0008, 32.4709],  // Phenix City
+    alabama:         [-86.8025, 33.5186],  // Birmingham
+    huntsville:      HOME,
   };
 
   const LOCATION_LABELS = {
-    saudiarabia:    'Riyadh, Saudi Arabia',
+    australia:       'Sydney, Australia',
+    saudiarabia:     'Riyadh, Saudi Arabia',
     nepal:           'Kathmandu, Nepal',
     pennsylvinia:    'Philadelphia, PA',
     northcarolina:   'Raleigh, NC',
