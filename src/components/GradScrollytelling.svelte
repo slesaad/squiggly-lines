@@ -4,6 +4,7 @@
   let {
     cadenPhoto,
     cadenTriumphantPhoto,
+    cadenCryingPhoto,
     steps = [],
   } = $props();
 
@@ -493,12 +494,18 @@
       <div class="panel" class:visible={activePanel === 'photo'}>
         <div
           class="photo-stage"
-          class:cap={['intro-skit-cap','intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
-          class:degree={['intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
+          class:cap={['intro-skit-cap','intro-skit-degree','flying-colors'].includes(activeKind)}
+          class:degree={['intro-skit-degree','flying-colors'].includes(activeKind)}
           class:tears={activeKind === 'late-nights'}
           class:flying={activeKind === 'flying-colors'}
         >
-          <img class="caden-img" src={activeKind === 'flying-colors' ? cadenTriumphantPhoto : cadenPhoto} alt="Caden" />
+          <img
+            class="caden-img"
+            src={activeKind === 'flying-colors' ? cadenTriumphantPhoto
+               : activeKind === 'late-nights' ? cadenCryingPhoto
+               : cadenPhoto}
+            alt="Caden"
+          />
 
           <div class="overlay cap-overlay">🎓</div>
           <div class="overlay degree-overlay">
