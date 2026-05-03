@@ -980,12 +980,16 @@
   .winged-square {
     position: absolute;
     top: calc(15% + var(--i) * 10%);
-    left: -20%;
+    left: 0;
     display: flex;
     align-items: center;
     gap: 4px;
-    animation: wing-fly 2.6s ease-in forwards;
-    animation-delay: calc(var(--i) * 0.18s);
+    /* Negative animation-delay staggers each square permanently — square i
+       starts at i/8 of the way through the loop, so a fresh square is
+       always entering from the left. Infinite means it keeps flowing as
+       long as the user lingers on the flying-colors step. */
+    animation: wing-fly 6s linear infinite;
+    animation-delay: calc(var(--i) * -0.75s);
     opacity: 0;
   }
   .photo-stage.flying .winged-square { opacity: 1; }
@@ -999,9 +1003,9 @@
   .wing { font-size: 1.6rem; }
   .wing.left  { transform: scaleX(-1); }
   @keyframes wing-fly {
-    0% { transform: translate(0, 0) rotate(-4deg); }
-    50% { transform: translate(60vw, -40px) rotate(6deg); }
-    100% { transform: translate(140vw, 30px) rotate(-2deg); }
+    0%   { transform: translate(-30vw, 0) rotate(-4deg); }
+    50%  { transform: translate(50vw, -20px) rotate(4deg); }
+    100% { transform: translate(130vw, 0) rotate(-4deg); }
   }
 
   /* Map panel */
