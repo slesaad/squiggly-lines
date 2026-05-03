@@ -159,24 +159,11 @@
     return flyTransform(null, 1);
   });
 
-  let videoEl;
   let videoMuted = $state(true);
 
   function toggleMute() {
     videoMuted = !videoMuted;
   }
-
-  $effect(() => {
-    // Re-runs when activeIndex changes; videoEl is the (re-bound) <video>.
-    if (videoEl && steps[activeIndex]?.kind === 'video') {
-      videoEl.currentTime = 0;
-      videoEl.muted = videoMuted;
-      const playPromise = videoEl.play();
-      if (playPromise && playPromise.catch) {
-        playPromise.catch(() => { /* autoplay blocked; user must tap */ });
-      }
-    }
-  });
 
   let outtakeIdx = $state(0);
   let outtakeFin = $state(false);
@@ -374,11 +361,11 @@
             {#key activeIndex}
               <div class="video-card">
                 <video
-                  bind:this={videoEl}
                   src={steps[activeIndex].src}
                   muted={videoMuted}
+                  autoplay
                   playsinline
-                  preload="metadata"
+                  preload="auto"
                   onended={() => {
                     if (autoplay) {
                       const next = storyEl?.querySelectorAll('.step')[activeIndex + 1];
