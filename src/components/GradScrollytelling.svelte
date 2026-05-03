@@ -891,10 +891,10 @@
   /* Tears + exam bubble (late-nights) */
   .tear {
     font-size: 3rem;
-    top: 30%;
+    top: 31%;
   }
-  .tear.left  { left: calc(50% - 80px); }
-  .tear.right { left: calc(50% + 50px); }
+  .tear.left  { left: calc(50% + 40px); }
+  .tear.right { left: calc(50% + 90px); }
   .photo-stage.tears .tear {
     opacity: 1;
     animation: tear-drip 1.2s ease-in infinite;
@@ -907,7 +907,7 @@
 
   .exam-bubble {
     top: 18%;
-    right: 6%;
+    right: 18%;
     background: var(--bg-color);
     border: 3px solid var(--border-color);
     border-radius: 18px;
@@ -1096,7 +1096,7 @@
     .photo-stage .cap-overlay { font-size: 5rem; }
     .frame { width: 200px; height: 150px; }
     .parchment { font-size: 1.1rem; }
-    .exam-bubble { font-size: 1.1rem; right: 4%; max-width: 200px; }
+    .exam-bubble { font-size: 1.1rem; right: 12%; max-width: 200px; }
     .placeholder-party { padding: 1.5rem 2rem; font-size: 1.1rem; }
     .placeholder-party strong { font-size: 1.5rem; }
     .play-button { top: 5rem; }
