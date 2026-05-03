@@ -102,6 +102,7 @@
     nepal:           [85.3240, 27.7172],   // Kathmandu
     pennsylvinia:    [-75.1652, 39.9526],  // Philadelphia
     northcarolina:   [-78.6382, 35.7796],  // Raleigh
+    nagshead:        [-75.6275, 35.9573],  // Nags Head, NC
     atlanta:         [-84.3880, 33.7490],  // Atlanta
     nashville:       [-86.7816, 36.1627],  // Nashville
     texas:           [-97.7431, 30.2672],  // Austin
@@ -116,11 +117,12 @@
     nepal:           'Kathmandu, Nepal',
     pennsylvinia:    'Philadelphia, PA',
     northcarolina:   'Raleigh, NC',
+    nagshead:        'Nags Head, NC',
     atlanta:         'Atlanta, GA',
     nashville:       'Nashville, TN',
     texas:           'Austin, TX',
     phoenixalabama:  'Phenix City, AL',
-    alabama:         'Birmingham, AL',
+    alabama:         'Cedar Bluff, AL',
     huntsville:      'Huntsville, AL',
   };
 
