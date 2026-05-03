@@ -864,6 +864,22 @@
     70% { transform: translateX(-50%) translateY(-6%) rotate(2deg); }
     100% { transform: translateX(-50%) translateY(0) rotate(-4deg); }
   }
+
+  /* Flying-colors per-scene overrides — Caden's pose differs in
+     caden-flying.jpg, so cap and frame need to land in different
+     spots than they do over caden.jpg. Tune freely. */
+  .photo-stage.flying .cap-overlay {
+    top: 15%;
+    left: 45%;
+    animation: none;
+    transform: translateX(-50%) translateY(-2%) rotate(-3deg);
+  }
+  .photo-stage.flying .degree-overlay {
+    bottom: 4%;
+    left: 50%;
+    animation: none;
+    transform: translateX(-50%) translateY(0) rotate(-4deg);
+  }
   .frame {
     width: 280px;
     height: 200px;
