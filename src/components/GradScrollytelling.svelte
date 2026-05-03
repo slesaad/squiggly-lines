@@ -566,10 +566,12 @@
     <div class="story-side" bind:this={storyEl}>
       {#each steps as step, i}
         <section class="step" data-index={i} class:active={i === activeIndex}>
-          <div class="bubble">
-            <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
-            <p>{@html mdInline(step.caption)}</p>
-          </div>
+          {#if step.caption}
+            <div class="bubble">
+              <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+              <p>{@html mdInline(step.caption)}</p>
+            </div>
+          {/if}
         </section>
       {/each}
     </div>
