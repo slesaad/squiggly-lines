@@ -690,9 +690,9 @@
   .step {
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 0 0 3.5rem 3rem;
     pointer-events: none;
   }
 
@@ -752,7 +752,7 @@
 
   @media (max-width: 780px) {
     .step {
-      padding: 1.25rem;
+      padding: 0 1.25rem 5rem 1.25rem;
     }
     .bubble {
       max-width: 100%;
