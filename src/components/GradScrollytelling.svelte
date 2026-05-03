@@ -225,6 +225,25 @@
     videoMuted = !videoMuted;
   }
 
+  let isFullscreen = $state(false);
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      const el = document.documentElement;
+      const req = el.requestFullscreen
+        ?? el.webkitRequestFullscreen
+        ?? el.mozRequestFullScreen
+        ?? el.msRequestFullscreen;
+      req?.call(el).catch(() => {});
+    } else {
+      const exit = document.exitFullscreen
+        ?? document.webkitExitFullscreen
+        ?? document.mozCancelFullScreen
+        ?? document.msExitFullscreen;
+      exit?.call(document);
+    }
+  }
+
   // Browsers block unmuted autoplay until the user has interacted with
   // the page. If the unmuted play() rejects, fall back to muted (and
   // sync videoMuted so the toggle reflects reality).
@@ -415,11 +434,22 @@
     function onKeyDown(e) {
       if (['ArrowDown','ArrowUp','PageDown','PageUp','Space','Home','End'].includes(e.code)) {
         onUserScroll();
+        return;
       }
+      // 'F' (no modifiers) toggles fullscreen — handy while casting.
+      if (e.code === 'KeyF' && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    }
+    function onFullscreenChange() {
+      isFullscreen = !!document.fullscreenElement;
     }
     window.addEventListener('wheel', onUserScroll, { passive: true });
     window.addEventListener('touchstart', onUserScroll, { passive: true });
     window.addEventListener('keydown', onKeyDown);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
 
     return () => {
       stepObserver.disconnect();
@@ -427,6 +457,8 @@
       window.removeEventListener('wheel', onUserScroll);
       window.removeEventListener('touchstart', onUserScroll);
       window.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
       clearAutoplayTimer();
       if (leafletMap) {
         leafletMap.remove();
@@ -461,6 +493,16 @@
     }}
   >
     {#if autoplay}⏸ pause{:else if activeIndex >= steps.length - 1}↻ replay{:else}▶ play{/if}
+  </button>
+
+  <button
+    class="fullscreen-button"
+    class:hidden={!inView}
+    type="button"
+    title="Toggle fullscreen (F)"
+    onclick={toggleFullscreen}
+  >
+    {isFullscreen ? '⛶ exit' : '⛶ fullscreen'}
   </button>
 
   <div class="progress-indicator" class:hidden={!inView}>
@@ -1193,5 +1235,27 @@
   .play-button.playing {
     background: var(--bg-color);
     color: var(--accent-color);
+  }
+
+  .fullscreen-button {
+    position: fixed;
+    top: 9.5rem;
+    left: 1rem;
+    z-index: 21;
+    background: var(--bg-color);
+    color: var(--accent-color);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 3px 4px 12px rgba(0,0,0,0.18);
+    transition: opacity 0.3s ease, transform 0.2s ease;
+  }
+  .fullscreen-button:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
+    transform: translateY(-1px);
   }
 </style>
