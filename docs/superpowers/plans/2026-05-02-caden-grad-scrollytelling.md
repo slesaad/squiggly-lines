@@ -1761,7 +1761,7 @@ steps={[
     examBubbles: [
       "ahhh I'm gonna fail!!! (Algorithms)",
       "ahhh I'm gonna fail!!! (Operating Systems)",
-      "ahhh I'm gonna fail!!! (Compilers)",
+      "ahhh I'm gonna fail!!! (Database)",
       "ahhh I'm gonna fail!!! (Networks)",
       "...every. single. exam.",
     ],

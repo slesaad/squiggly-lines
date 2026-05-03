@@ -871,7 +871,7 @@
   .photo-stage.flying .cap-overlay {
     font-size: 6rem;     /* cap emoji size for this scene */
     top: 13%;
-    left: 47%;
+    left: 48%;
     animation: none;
     transform: translateX(-50%) translateY(-2%) rotate(-3deg);
   }
@@ -880,8 +880,8 @@
        0% left = panel left edge, 100% left = panel right edge.
        (We dropped translateX(-50%) which was a centering trick that
        broke when switching to `right`.) */
-    top: 30%;
-    left: 5%;
+    top: 28%;
+    left: 55%;
     bottom: auto;
     right: auto;
     animation: none;
