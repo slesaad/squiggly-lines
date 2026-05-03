@@ -562,15 +562,17 @@
         </div>
       </div>
       <div class="panel" class:visible={activePanel === 'ending'}>
-        <div class="party-card">
-          <!-- SWAP POINT: replace this block with <img src="/squiggly-lines/images/party.jpg" /> after the surprise party. -->
-          <div class="placeholder-party">
-            🎉<br/>
-            <strong>the surprise party</strong><br/>
-            <span>photos land here<br/>tomorrow</span><br/>
-            🎉
-          </div>
-        </div>
+        {#if activePanel === 'ending'}
+          <video
+            class="party-video"
+            src="/squiggly-lines/videos/CHG Videos/surprise-party.mp4"
+            muted={videoMuted}
+            autoplay
+            playsinline
+            preload="auto"
+            onloadedmetadata={recoverFromAutoplayBlock}
+          ></video>
+        {/if}
       </div>
     </div>
 
@@ -1143,39 +1145,16 @@
     .frame { width: 200px; height: 150px; }
     .parchment { font-size: 1.1rem; }
     .exam-bubble { font-size: 1.1rem; right: 12%; max-width: 200px; }
-    .placeholder-party { padding: 1.5rem 2rem; font-size: 1.1rem; }
-    .placeholder-party strong { font-size: 1.5rem; }
     .play-button { top: 5rem; }
   }
 
-  .party-card {
+  .party-video {
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .placeholder-party {
-    background: var(--bg-color);
-    border: 4px dashed var(--border-color);
-    border-radius: 12px;
-    padding: 2.5rem 3rem;
-    text-align: center;
-    font-size: 1.4rem;
-    color: var(--text-color);
-    transform: rotate(-1.5deg);
-    box-shadow: 4px 6px 18px rgba(0,0,0,0.18);
-  }
-  .placeholder-party strong {
-    font-size: 2rem;
-    color: var(--accent-color);
-    display: block;
-    margin: 0.5rem 0;
-  }
-  .placeholder-party span {
-    font-size: 1rem;
-    color: var(--text-color);
-    opacity: 0.7;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
   }
 
 
