@@ -227,7 +227,8 @@
     const category = categoryEl?.dataset.postCategory;
     backHref = resolveBack(category ? `/${category}` : '/');
 
-    // Lazy-load Leaflet (browser only). Inject CSS once via CDN.
+    // Lazy-load Leaflet from CDN (browser only). Avoids needing to resolve
+    // through the bundler's module graph (which doesn't see Yarn PnP here).
     if (!document.querySelector('link[data-leaflet-css]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
@@ -237,8 +238,26 @@
       link.dataset.leafletCss = '1';
       document.head.appendChild(link);
     }
-    const Lmod = await import('leaflet');
-    const L = Lmod.default ?? Lmod;
+    if (!window.L) {
+      await new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-leaflet-js]');
+        if (existing) {
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', reject);
+          return;
+        }
+        const s = document.createElement('script');
+        s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        s.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+        s.crossOrigin = '';
+        s.dataset.leafletJs = '1';
+        s.onload = () => resolve();
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+    const L = window.L;
+    if (!L) return;
     if (mapContainerEl && !leafletMap) {
       leafletMap = L.map(mapContainerEl, {
         zoomControl: false,
