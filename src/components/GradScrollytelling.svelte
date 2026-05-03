@@ -79,7 +79,7 @@
   }
 
   const PHOTO_KINDS = new Set([
-    'intro-greeting', 'intro-skit-cap', 'intro-skit-gown', 'intro-skit-degree',
+    'intro-greeting', 'intro-skit-cap', 'intro-skit-degree',
     'late-nights', 'flying-colors',
   ]);
   const MAP_KINDS = new Set(['map-intro', 'video', 'map-home']);
@@ -493,8 +493,7 @@
       <div class="panel" class:visible={activePanel === 'photo'}>
         <div
           class="photo-stage"
-          class:cap={['intro-skit-cap','intro-skit-gown','intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
-          class:gown={['intro-skit-gown','intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
+          class:cap={['intro-skit-cap','intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
           class:degree={['intro-skit-degree','late-nights','flying-colors'].includes(activeKind)}
           class:tears={activeKind === 'late-nights'}
           class:flying={activeKind === 'flying-colors'}
@@ -502,7 +501,6 @@
           <img class="caden-img" src={activeKind === 'flying-colors' ? cadenTriumphantPhoto : cadenPhoto} alt="Caden" />
 
           <div class="overlay cap-overlay">🎓</div>
-          <div class="overlay gown-overlay">🥋</div>
           <div class="overlay degree-overlay">
             <div class="frame">
               <div class="parchment">M.S.<br/>Computer<br/>Science</div>
@@ -829,9 +827,9 @@
 
   /* Cap */
   .cap-overlay {
-    font-size: 8rem;
-    top: 8%;
-    left: 50%;
+    font-size: 14rem;
+    top: 15%;
+    left: 45%;
     transform: translateX(-50%) translateY(-150%);
   }
   .photo-stage.cap .cap-overlay {
@@ -842,23 +840,6 @@
     0% { transform: translateX(-50%) translateY(-150%) rotate(-30deg); }
     60% { transform: translateX(-50%) translateY(10%) rotate(8deg); }
     100% { transform: translateX(-50%) translateY(-2%) rotate(-3deg); }
-  }
-
-  /* Gown */
-  .gown-overlay {
-    font-size: 16rem;
-    top: 38%;
-    left: 50%;
-    transform: translateX(-50%) scaleY(0.7);
-    filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));
-  }
-  .photo-stage.gown .gown-overlay {
-    opacity: 0.9;
-    animation: gown-fade 0.7s ease forwards;
-  }
-  @keyframes gown-fade {
-    from { opacity: 0; transform: translateX(-50%) scaleY(0.7); }
-    to   { opacity: 0.9; transform: translateX(-50%) scaleY(1); }
   }
 
   /* Degree */
@@ -1106,7 +1087,6 @@
     }
 
     .photo-stage .cap-overlay { font-size: 5rem; }
-    .photo-stage .gown-overlay { font-size: 11rem; }
     .frame { width: 200px; height: 150px; }
     .parchment { font-size: 1.1rem; }
     .exam-bubble { font-size: 1.1rem; right: 4%; max-width: 200px; }
