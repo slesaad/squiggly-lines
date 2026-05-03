@@ -4,7 +4,6 @@
   let {
     cadenPhoto,
     cadenTriumphantPhoto,
-    worldMap,
     steps = [],
   } = $props();
 
@@ -131,32 +130,33 @@
     '/squiggly-lines/videos/CHG Videos/bloopers/MomAddison2.mp4',
   ];
 
-  const showBlooper = $derived(MAP_KINDS.has(activeKind));
-  const blooperIdx = $derived(activeIndex % BLOOPERS.length);
-  const blooperDimmed = $derived(activeKind === 'video');
+  // Leaflet map state. Initialized in onMount (browser-only).
+  let mapContainerEl;
+  let leafletMap = null;
+  let leafletReady = $state(false);
 
-  // Equirectangular projection on a 1000x500 viewBox.
-  // Returns CSS transform that centers (lng,lat) in a 100% panel at given zoom.
-  function flyTransform(coords, zoom = 1) {
-    if (!coords) return 'translate(0, 0) scale(1)';
-    const [lng, lat] = coords;
-    // Coords on the SVG (origin top-left, 0..1000 / 0..500):
-    const x = (lng + 180) / 360 * 1000;
-    const y = (90 - lat) / 180 * 500;
-    // We want (x, y) at the panel center after scaling.
-    // Center of the unscaled map is (500, 250).
-    const dx = (500 - x) * zoom;
-    const dy = (250 - y) * zoom;
-    return `translate(${dx / 10}%, ${dy / 5}%) scale(${zoom})`;
+  function leafletTargetForStep(step) {
+    if (!step) return null;
+    if (step.kind === 'map-intro') return { center: [20, 0], zoom: 2 };
+    if (step.kind === 'video') {
+      const c = COORDS[step.locationKey];
+      if (!c) return null;
+      return { center: [c[1], c[0]], zoom: step.zoom ?? 6 };
+    }
+    if (step.kind === 'map-home') {
+      return { center: [HOME[1], HOME[0]], zoom: 11 };
+    }
+    return null;
   }
 
-  const mapTransform = $derived.by(() => {
-    const step = steps[activeIndex];
-    if (!step) return flyTransform(null, 1);
-    if (step.kind === 'map-intro') return flyTransform([0, 20], 1);
-    if (step.kind === 'video') return flyTransform(COORDS[step.locationKey] ?? null, step.zoom ?? 6);
-    if (step.kind === 'map-home') return flyTransform(HOME, 11);
-    return flyTransform(null, 1);
+  $effect(() => {
+    if (!leafletReady || !leafletMap) return;
+    const target = leafletTargetForStep(steps[activeIndex]);
+    if (!target) return;
+    leafletMap.flyTo(target.center, target.zoom, {
+      duration: 1.6,
+      easeLinearity: 0.25,
+    });
   });
 
   let videoMuted = $state(true);
@@ -222,10 +222,53 @@
     return s;
   }
 
-  onMount(() => {
+  onMount(async () => {
     const categoryEl = rootEl.closest('[data-post-category]');
     const category = categoryEl?.dataset.postCategory;
     backHref = resolveBack(category ? `/${category}` : '/');
+
+    // Lazy-load Leaflet (browser only). Inject CSS once via CDN.
+    if (!document.querySelector('link[data-leaflet-css]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+      link.crossOrigin = '';
+      link.dataset.leafletCss = '1';
+      document.head.appendChild(link);
+    }
+    const Lmod = await import('leaflet');
+    const L = Lmod.default ?? Lmod;
+    if (mapContainerEl && !leafletMap) {
+      leafletMap = L.map(mapContainerEl, {
+        zoomControl: false,
+        attributionControl: true,
+        scrollWheelZoom: false,
+        dragging: false,
+        touchZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        zoomAnimation: true,
+        worldCopyJump: false,
+      }).setView([20, 0], 2);
+
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          minZoom: 1,
+          maxZoom: 14,
+        },
+      ).addTo(leafletMap);
+
+      // Force a tile recompute once the panel becomes visible.
+      requestAnimationFrame(() => {
+        leafletMap.invalidateSize();
+        leafletReady = true;
+      });
+    }
 
     const stepObserver = new IntersectionObserver(
       (entries) => {
@@ -266,6 +309,11 @@
       window.removeEventListener('touchstart', onUserScroll);
       window.removeEventListener('keydown', onKeyDown);
       clearAutoplayTimer();
+      if (leafletMap) {
+        leafletMap.remove();
+        leafletMap = null;
+        leafletReady = false;
+      }
     };
   });
 </script>
@@ -342,14 +390,9 @@
           </div>
         </div>
       </div>
-      <div class="panel" class:visible={activePanel === 'map'}>
+      <div class="panel map-panel" class:visible={activePanel === 'map'}>
         <div class="map-frame">
-          <img
-            class="world-map"
-            src={worldMap}
-            alt="World map"
-            style="transform: {mapTransform};"
-          />
+          <div class="leaflet-host" bind:this={mapContainerEl}></div>
           {#if steps[activeIndex]?.kind === 'video' || steps[activeIndex]?.kind === 'map-home'}
             <div class="map-pin">📍</div>
             <div class="map-label">
@@ -422,20 +465,6 @@
     </div>
   </div>
 
-  {#if showBlooper && inView}
-    {#key blooperIdx}
-      <video
-        class="blooper-pip"
-        class:dim={blooperDimmed}
-        src={BLOOPERS[blooperIdx]}
-        muted
-        autoplay
-        loop
-        playsinline
-        preload="metadata"
-      ></video>
-    {/key}
-  {/if}
 </div>
 
 <style>
@@ -805,18 +834,17 @@
     background: var(--bg-color);
   }
 
-  .world-map {
+  .leaflet-host {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    inset: 0;
     width: 100%;
-    height: auto;
-    aspect-ratio: 2 / 1;
-    margin-top: -25%;
-    margin-left: -50%;
-    color: var(--accent-color);
-    transition: transform 1.8s cubic-bezier(0.65, 0, 0.35, 1);
-    will-change: transform;
+    height: 100%;
+    background: #e8e6df;
+  }
+  /* Leaflet attribution box — make readable in dark mode too */
+  :global(.leaflet-control-attribution) {
+    font-size: 10px !important;
+    background: rgba(255, 255, 255, 0.85) !important;
   }
 
   .map-pin {
@@ -900,32 +928,7 @@
     color: var(--bg-color);
   }
 
-  .blooper-pip {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    width: 240px;
-    height: 180px;
-    object-fit: cover;
-    border: 4px solid var(--border-color);
-    border-radius: 6px;
-    box-shadow: 4px 6px 18px rgba(0,0,0,0.3);
-    transform: rotate(2deg);
-    background: #000;
-    z-index: 25;
-    transition: opacity 0.4s ease;
-    opacity: 1;
-  }
-  .blooper-pip.dim { opacity: 0.3; }
-
   @media (max-width: 780px) {
-    .blooper-pip {
-      width: 160px;
-      height: 120px;
-      bottom: 0.5rem;
-      right: 0.5rem;
-    }
-
     .video-card {
       width: 94%;
       height: 92%;
