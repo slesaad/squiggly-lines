@@ -491,19 +491,21 @@
         </div>
       </div>
       <div class="panel" class:visible={activePanel === 'outtakes'}>
-        {#if outtakeFin}
-          <div class="fin-card">fin.</div>
-        {:else}
-          {#key outtakeIdx}
-            <video
-              class="outtake-reel"
-              src={BLOOPERS[outtakeIdx]}
-              autoplay
-              playsinline
-              preload="metadata"
-              onended={advanceOuttake}
-            ></video>
-          {/key}
+        {#if activePanel === 'outtakes'}
+          {#if outtakeFin}
+            <div class="fin-card">fin.</div>
+          {:else}
+            {#key outtakeIdx}
+              <video
+                class="outtake-reel"
+                src={BLOOPERS[outtakeIdx]}
+                autoplay
+                playsinline
+                preload="metadata"
+                onended={advanceOuttake}
+              ></video>
+            {/key}
+          {/if}
         {/if}
       </div>
     </div>
