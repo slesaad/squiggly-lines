@@ -134,6 +134,8 @@
   let mapContainerEl;
   let leafletMap = null;
   let leafletReady = $state(false);
+  let videoCardReady = $state(false);
+  let activeMarker = null;
 
   function leafletTargetForStep(step) {
     if (!step) return null;
@@ -151,8 +153,39 @@
 
   $effect(() => {
     if (!leafletReady || !leafletMap) return;
-    const target = leafletTargetForStep(steps[activeIndex]);
+    const step = steps[activeIndex];
+    const target = leafletTargetForStep(step);
+
+    // Reset video visibility for every step entry.
+    videoCardReady = false;
+
+    // Drop any existing marker.
+    if (activeMarker) {
+      leafletMap.removeLayer(activeMarker);
+      activeMarker = null;
+    }
+
     if (!target) return;
+
+    // Drop a marker for video / map-home steps.
+    const L = window.L;
+    if (L && (step.kind === 'video' || step.kind === 'map-home')) {
+      const icon = L.divIcon({
+        className: 'grad-marker',
+        html: '📍',
+        iconSize: [44, 44],
+        iconAnchor: [22, 40],
+      });
+      activeMarker = L.marker(target.center, { icon, interactive: false }).addTo(leafletMap);
+    }
+
+    // After the fly settles, reveal the video card.
+    const onMoveEnd = () => {
+      leafletMap.off('moveend', onMoveEnd);
+      if (step.kind === 'video') videoCardReady = true;
+    };
+    leafletMap.on('moveend', onMoveEnd);
+
     leafletMap.flyTo(target.center, target.zoom, {
       duration: 1.6,
       easeLinearity: 0.25,
@@ -413,13 +446,12 @@
         <div class="map-frame">
           <div class="leaflet-host" bind:this={mapContainerEl}></div>
           {#if steps[activeIndex]?.kind === 'video' || steps[activeIndex]?.kind === 'map-home'}
-            <div class="map-pin">📍</div>
             <div class="map-label">
               <strong>{steps[activeIndex]?.name ?? ''}</strong>
               <span>{LOCATION_LABELS[steps[activeIndex]?.locationKey] ?? ''}</span>
             </div>
           {/if}
-          {#if steps[activeIndex]?.kind === 'video' && steps[activeIndex]?.src}
+          {#if steps[activeIndex]?.kind === 'video' && steps[activeIndex]?.src && videoCardReady}
             {#key activeIndex}
               <div class="video-card">
                 <video
@@ -866,24 +898,23 @@
     background: rgba(255, 255, 255, 0.85) !important;
   }
 
-  .map-pin {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -100%);
-    font-size: 3rem;
-    z-index: 2;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+  /* Custom Leaflet marker (DivIcon with 📍 emoji + bob animation) */
+  :global(.grad-marker) {
+    font-size: 2.5rem;
+    text-align: center;
+    line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
     animation: pin-bob 2.4s ease-in-out infinite;
+    pointer-events: none;
   }
   @keyframes pin-bob {
-    0%, 100% { transform: translate(-50%, -100%) translateY(0); }
-    50% { transform: translate(-50%, -100%) translateY(-8px); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
 
   .map-label {
     position: absolute;
-    bottom: 8%;
+    bottom: 4%;
     left: 50%;
     transform: translateX(-50%) rotate(-1deg);
     background: var(--bg-color);
@@ -891,7 +922,7 @@
     border-radius: 8px;
     padding: 10px 18px;
     text-align: center;
-    z-index: 2;
+    z-index: 1100;
     box-shadow: 3px 4px 12px rgba(0,0,0,0.18);
   }
   .map-label strong {
@@ -917,11 +948,18 @@
     border: 6px solid var(--border-color);
     border-radius: 6px;
     box-shadow: 10px 12px 36px rgba(0, 0, 0, 0.4);
-    z-index: 3;
+    z-index: 1000;
     padding: 10px 10px 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: video-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    transform-origin: 50% 50%;
+  }
+  @keyframes video-pop {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    70%  { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
   .video-card video {
     width: 100%;
