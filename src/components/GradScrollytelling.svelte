@@ -44,7 +44,7 @@
       // end, the user can scroll past it.
       return;
     }
-    autoplayTimer = setTimeout(advance, step.duration ?? 5000);
+    autoplayTimer = setTimeout(advance, step.duration ?? 50000);
   }
 
   $effect(() => {
@@ -216,10 +216,6 @@
   });
 
   let videoMuted = $state(false);
-
-  function toggleMute() {
-    videoMuted = !videoMuted;
-  }
 
   let isFullscreen = $state(false);
 
@@ -549,6 +545,8 @@
                   playsinline
                   preload="auto"
                   onloadedmetadata={recoverFromAutoplayBlock}
+                  onmouseenter={(e) => { e.currentTarget.controls = true; }}
+                  onmouseleave={(e) => { e.currentTarget.controls = false; }}
                   onended={() => {
                     if (autoplay) {
                       const next = storyEl?.querySelectorAll('.step')[activeIndex + 1];
@@ -556,9 +554,6 @@
                     }
                   }}
                 ></video>
-                <button class="mute-toggle" type="button" onclick={toggleMute}>
-                  {videoMuted ? '🔇 unmute' : '🔊 mute'}
-                </button>
               </div>
             {/key}
           {/if}
@@ -574,6 +569,8 @@
             playsinline
             preload="auto"
             onloadedmetadata={recoverFromAutoplayBlock}
+            onmouseenter={(e) => { e.currentTarget.controls = true; }}
+            onmouseleave={(e) => { e.currentTarget.controls = false; }}
           ></video>
         {/if}
       </div>
@@ -1120,23 +1117,6 @@
     object-fit: contain;
     background: #000;
   }
-  .mute-toggle {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background: var(--bg-color);
-    color: var(--accent-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.85rem;
-    cursor: pointer;
-  }
-  .mute-toggle:hover {
-    background: var(--accent-color);
-    color: var(--bg-color);
-  }
-
   @media (max-width: 780px) {
     .video-card {
       width: 94%;
