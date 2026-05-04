@@ -37,11 +37,14 @@
       if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     if (step.duration === 'video-end') {
-      // Video onended will schedule advance; fallback timer 30s
-      autoplayTimer = setTimeout(advance, 30000);
-    } else {
-      autoplayTimer = setTimeout(advance, step.duration ?? 5000);
+      // Let the video's onended handler advance us. No timer here —
+      // a fallback timer would just truncate any video longer than
+      // the timeout (Chase is 3+ minutes; nothing reasonable covers
+      // every contributor's clip). If a video genuinely fails to
+      // end, the user can scroll past it.
+      return;
     }
+    autoplayTimer = setTimeout(advance, step.duration ?? 5000);
   }
 
   $effect(() => {
