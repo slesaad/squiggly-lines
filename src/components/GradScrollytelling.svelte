@@ -402,15 +402,12 @@
     );
     rootObserver.observe(rootEl);
 
-    function onUserScroll() {
-      if (autoplay) stopAutoplay();
-    }
+    // 'F' (no modifiers) toggles fullscreen — handy while casting.
+    // No more "any user input cancels autoplay" — autoplay only stops when
+    // the user clicks ⏸ pause. Manual scrolling, seeking on the video, or
+    // pressing arrow keys all leave autoplay running so the user can jump
+    // around freely.
     function onKeyDown(e) {
-      if (['ArrowDown','ArrowUp','PageDown','PageUp','Space','Home','End'].includes(e.code)) {
-        onUserScroll();
-        return;
-      }
-      // 'F' (no modifiers) toggles fullscreen — handy while casting.
       if (e.code === 'KeyF' && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
         e.preventDefault();
         toggleFullscreen();
@@ -419,8 +416,6 @@
     function onFullscreenChange() {
       isFullscreen = !!document.fullscreenElement;
     }
-    window.addEventListener('wheel', onUserScroll, { passive: true });
-    window.addEventListener('touchstart', onUserScroll, { passive: true });
     window.addEventListener('keydown', onKeyDown);
     document.addEventListener('fullscreenchange', onFullscreenChange);
     document.addEventListener('webkitfullscreenchange', onFullscreenChange);
@@ -428,8 +423,6 @@
     return () => {
       stepObserver.disconnect();
       rootObserver.disconnect();
-      window.removeEventListener('wheel', onUserScroll);
-      window.removeEventListener('touchstart', onUserScroll);
       window.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
