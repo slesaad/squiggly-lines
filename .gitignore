@@ -13,4 +13,4 @@ node_modules/
 .DS_Store
 
 # Compressed video originals (kept locally, never deployed)
-public/videos/CHG Videos/.originals/
+public/videos/graduation/.originals/
