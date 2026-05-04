@@ -556,7 +556,7 @@
         {#if activePanel === 'ending'}
           <video
             class="party-video"
-            src="/squiggly-lines/videos/CHG Videos/surprise-party.mp4"
+            src="/squiggly-lines/videos/graduation/surprise-party.mp4"
             muted={videoMuted}
             autoplay
             playsinline

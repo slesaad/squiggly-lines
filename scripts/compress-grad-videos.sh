@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Compresses every .mp4/.mov/.MOV in public/videos/CHG Videos/ (and bloopers/)
+# Compresses every .mp4/.mov/.MOV in public/videos/graduation/ (and bloopers/)
 # in place. Originals are moved to .originals/ (gitignored) so they're
 # recoverable but never deployed.
 #
@@ -11,7 +11,7 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
   exit 1
 fi
 
-SRC="public/videos/CHG Videos"
+SRC="public/videos/graduation"
 TMP="$SRC/.compressed"
 ORIG="$SRC/.originals"
 mkdir -p "$TMP" "$TMP/bloopers" "$ORIG" "$ORIG/bloopers"
