@@ -11,3 +11,7 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Compressed video & image originals (kept locally, never deployed)
+public/videos/graduation/.originals/
+public/images/.originals/

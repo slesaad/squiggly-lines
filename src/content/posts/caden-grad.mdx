@@ -1,0 +1,110 @@
+---
+title: caden, master of computer science
+date: 2026-05-03
+category: misc
+excerpt: a love letter, scroll through it.
+fullscreen: true
+draft: false
+---
+
+import GradScrollytelling from '../../components/GradScrollytelling.svelte';
+
+<GradScrollytelling
+  client:load
+  cadenPhoto="/squiggly-lines/images/caden.jpg"
+  cadenTriumphantPhoto="/squiggly-lines/images/caden-flying.jpg"
+  cadenCryingPhoto="/squiggly-lines/images/caden-crying.jpg"
+  steps={[
+    // Act 1: The Promotion
+    { kind: 'intro-greeting', caption: '**hey, Master Caden!** 🎓', duration: 4500 },
+    { kind: 'intro-skit-cap', caption: "you've been promoted from *bachelor* to **master**.", duration: 5000 },
+    { kind: 'intro-skit-degree', caption: 'and a degree so heavy you can barely hold it.', duration: 5500 },
+    { kind: 'late-nights', caption: "many late nights, sweat, and tears to get here…", duration: 9000,
+      examBubbles: [
+        "ahhh I'm gonna fail!!! (Algorithms)",
+        "ahhh I'm gonna fail!!! (Operating Systems)",
+        "ahhh I'm gonna fail!!! (Database)",
+        "ahhh I'm gonna fail!!! (Networks)",
+        "...every. single. exam.",
+      ],
+    },
+    { kind: 'flying-colors', caption: 'but you passed with **flying colors.** 🪽', duration: 5500 },
+
+    // Act 2: Voices from around the world (farthest → closest)
+    { kind: 'map-intro', caption: "here's what your friends and family have to say. **from all around the world.**", duration: 4500 },
+
+    { kind: 'video', name: 'Vinu & Sandip', locationKey: 'australia',
+      src: '/squiggly-lines/videos/graduation/Vinu-n-Sandip-Australia.mp4',
+      caption: '**vinu & sandip** — sydney, australia. 🇦🇺', duration: 'video-end' },
+
+    { kind: 'video', name: 'Aha', locationKey: 'australia',
+      src: '/squiggly-lines/videos/graduation/Neha-n-Aha-Australia.mp4',
+      caption: '**aha** — sydney, australia. 🇦🇺', duration: 'video-end' },
+
+    { kind: 'video', name: 'Neha', locationKey: 'australia',
+      src: '/squiggly-lines/videos/graduation/neha-australia.mp4',
+      caption: '**neha** — sydney, australia. 🇦🇺', duration: 'video-end' },
+
+    { kind: 'video', name: 'Chase', locationKey: 'saudiarabia',
+      src: '/squiggly-lines/videos/graduation/Chase-saudiarabia.mp4',
+      caption: '**chase** — riyadh, saudi arabia. 🇸🇦', duration: 'video-end' },
+
+    { kind: 'video', name: 'Mamu & Daddy', locationKey: 'nepal',
+      src: '/squiggly-lines/videos/graduation/MamuDaddy-nepal.mp4',
+      caption: '**mamu & daddy** — nepal. 🇳🇵', duration: 'video-end' },
+
+    { kind: 'video', name: 'Brandon DANG', locationKey: 'pennsylvinia',
+      src: '/squiggly-lines/videos/graduation/BrandonDang-pennsylvinia.mp4',
+      caption: '**brandon** — pennsylvania.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Colette', locationKey: 'northcarolina',
+      src: '/squiggly-lines/videos/graduation/colette-northcarolina.mp4',
+      caption: '**colette** — north carolina.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Colette (again!)', locationKey: 'northcarolina',
+      src: '/squiggly-lines/videos/graduation/colette2-northcarolina.mp4',
+      caption: '**colette, take two.**', duration: 'video-end' },
+
+    { kind: 'video', name: 'Kristen', locationKey: 'nagshead',
+      src: '/squiggly-lines/videos/graduation/Kristen-nagshead-northcarolina.mp4',
+      caption: '**kristen** — nags head, north carolina.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Liesl & Kevin', locationKey: 'atlanta',
+      src: '/squiggly-lines/videos/graduation/Liesl-n-Kevin-atlanta.mp4',
+      caption: '**liesl** — atlanta.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Angela', locationKey: 'atlanta',
+      src: '/squiggly-lines/videos/graduation/Angela-atlanta.mp4',
+      caption: '**angela** — atlanta.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Mom & Addison', locationKey: 'atlanta',
+      src: '/squiggly-lines/videos/graduation/MomAddison-atlanta.mp4',
+      caption: '**mom & addison** — atlanta.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Jenna & Max', locationKey: 'atlanta',
+      src: '/squiggly-lines/videos/graduation/Jenna-n-Max-atlanta.mp4',
+      caption: '**jenna & max** — atlanta.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Saam', locationKey: 'nashville',
+      src: '/squiggly-lines/videos/graduation/Saam-nashville.mp4',
+      caption: '**saam** — nashville.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Ben', locationKey: 'texas',
+      src: '/squiggly-lines/videos/graduation/Ben-texas.mp4',
+      caption: '**ben** — texas.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Blaine & Ramona', locationKey: 'phoenixalabama',
+      src: '/squiggly-lines/videos/graduation/BlaineRamona-phoenixalabama.mp4',
+      caption: '**blaine & ramona** — phenix city, AL.', duration: 'video-end' },
+
+    { kind: 'video', name: 'Dad', locationKey: 'alabama',
+      src: '/squiggly-lines/videos/graduation/Dad-alabama.mp4',
+      caption: '**dad** — alabama.', duration: 'video-end' },
+
+    { kind: 'map-home', name: 'Home', locationKey: 'huntsville',
+      duration: 5000 /* TODO: add placeholder photo/video here */ },
+
+    // Act 3: Home, at last
+    { kind: 'ending', caption: '🎉 **congratulations, caden!!!**', duration: 7000 },
+  ]}
+/>
