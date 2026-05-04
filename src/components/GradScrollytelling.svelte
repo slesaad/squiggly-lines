@@ -440,7 +440,7 @@
 </script>
 
 <div class="scrollytelling" bind:this={rootEl}>
-  <a class="back-link" class:hidden={!inView} href={backHref} onclick={handleBack}>&lt;&lt; go back</a>
+  <a class="back-link" class:hidden={!inView || isFullscreen} href={backHref} onclick={handleBack}>&lt;&lt; go back</a>
 
   <button
     class="play-button"
