@@ -19,7 +19,7 @@ const base = getBase();
 
 // Determine if this page should have collapsed layout
 const path = Astro.url.pathname;
-const isPostPage = path.includes('/posts/');
+const isPostPage = /\/posts\/[^/]/.test(path);
 const shouldCollapse = !fullscreen && (collapsed || isPostPage);
 ---
 

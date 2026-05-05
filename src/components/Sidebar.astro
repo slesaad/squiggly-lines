@@ -18,7 +18,7 @@ const isActive = (segment: string) => path.startsWith(`${base}${segment}`);
     <a href={SOCIAL.linkedin}><img class="icon linkedin" src={`${base}images/icons/linkedin.png`} alt="linkedin" /></a>
   </div>
   <div class="menu">
-    <a href={`${base}blog`} class:list={["all", { active: isActive("blog") }]}>all</a>
+    <a href={`${base}posts`} class:list={["all", { active: path === `${base}posts/` || path === `${base}posts` }]}>all</a>
     <a href={`${base}art`} class:list={[{ active: isActive("art") }]}>art</a>
     <a href={`${base}dev`} class:list={[{ active: isActive("dev") }]}>dev</a>
     <a href={`${base}make`} class:list={[{ active: isActive("make") }]}>make</a>
