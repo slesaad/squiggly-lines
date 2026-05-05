@@ -39,8 +39,7 @@
   }
 
   function handleBack(e) {
-    const ref = document.referrer;
-    if (ref && new URL(ref).origin === window.location.origin && window.history.length > 1) {
+    if (window.history.length > 1) {
       e.preventDefault();
       window.history.back();
     }
@@ -83,9 +82,7 @@
   }
 
   onMount(() => {
-    const categoryEl = rootEl.closest('[data-post-category]');
-    const category = categoryEl?.dataset.postCategory;
-    backHref = resolveBack(category ? `/${category}` : '/');
+    backHref = resolveBack('/posts/');
 
     const stepObserver = new IntersectionObserver(
       (entries) => {

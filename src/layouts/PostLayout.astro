@@ -2,13 +2,15 @@
 import BaseLayout from './BaseLayout.astro';
 import '../styles/blog.scss';
 import type { CollectionEntry } from 'astro:content';
+import { getBase } from '../consts';
 
 interface Props {
   post: CollectionEntry<'posts'>;
 }
 
 const { post } = Astro.props;
-const { title, date, fullscreen, category } = post.data;
+const { title, date, fullscreen } = post.data;
+const base = getBase();
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
@@ -20,29 +22,26 @@ function formatDate(date: Date): string {
 ---
 
 <BaseLayout title={title} fullscreen={fullscreen}>
-  <div data-post-category={category}>
-    {fullscreen ? (
-      <slot />
-    ) : (
-      <>
-        <a class="back-link" href={`/${category}`} data-back-link>&lt;&lt; go back</a>
-        <article class="post">
-          <h1>{title}</h1>
-          <div class="entry">
-            <slot />
-          </div>
-          <div class="date">Written on {formatDate(date)}</div>
-        </article>
-      </>
-    )}
-  </div>
+  {fullscreen ? (
+    <slot />
+  ) : (
+    <>
+      <a class="back-link" href={`${base}posts/`} data-back-link>&lt;&lt; go back</a>
+      <article class="post">
+        <h1>{title}</h1>
+        <div class="entry">
+          <slot />
+        </div>
+        <div class="date">Written on {formatDate(date)}</div>
+      </article>
+    </>
+  )}
 </BaseLayout>
 
 <script>
   document.querySelectorAll('a[data-back-link]').forEach((el) => {
     el.addEventListener('click', (e) => {
-      const ref = document.referrer;
-      if (ref && new URL(ref).origin === window.location.origin && window.history.length > 1) {
+      if (window.history.length > 1) {
         e.preventDefault();
         window.history.back();
       }
