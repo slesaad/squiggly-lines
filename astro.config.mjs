@@ -4,7 +4,6 @@ import sitemap from '@astrojs/sitemap';
 import svelte from '@astrojs/svelte';
 
 export default defineConfig({
-  site: 'https://slesaad.github.io',
-  base: '/squiggly-lines',
+  site: 'https://squiggles.slesa.com.np',
   integrations: [mdx(), sitemap(), svelte()],
 });
