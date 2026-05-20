@@ -1,6 +1,13 @@
 # squiggly-lines
 
-squiggly-lines is a jekyll based blog
+my personal blog — *perfectly imperfect*. a place to document projects, makes, and life as it happens. live at [squiggles.slesa.com.np](https://squiggles.slesa.com.np).
 
-i created this blog in hope to better document my projects and life event
-i think it'll be fun to look back at it
+## dev
+
+built with [astro](https://astro.build) + svelte. interactive posts via mdx. dark/light theme. deployed to github pages.
+
+```bash
+npm install
+npm run dev      # local dev
+npm run build    # production build
+```
