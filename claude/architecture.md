@@ -230,6 +230,70 @@ import MyComponent from '../../components/MyComponent.svelte';
 <MyComponent client:visible />
 ```
 
+**Reusable components** (already in `src/components/`, drop-in for any MDX post — no need to rebuild):
+
+| Component | Purpose |
+|-----------|---------|
+| `PostImage.svelte` | Single image with photo-frame styling (slight tilt, border, optional caption). |
+| `PostHeader.svelte` | Magazine-style header with kicker + title + description + optional hero image. |
+| `Gallery.svelte` | Captioned image grid. |
+| `Scrollytelling.svelte` | Generic scrollytelling: sticky image stack on the left, scrolling bubble steps on the right. See `ikea-greenhouse.mdx`. |
+| `InstagramEmbed.svelte` | Single Instagram post embedded in a polaroid frame. Takes `url` and optional `tilt` (degrees). Idempotently loads `embed.js` once and re-runs `instgrm.Embeds.process()` per instance. See `saanostory-comics.mdx`. |
+
+**Polaroid frame pattern.** Recurring motif — white background (`#fff`, locked, theme-independent), thick bottom padding (`14px 14px 3rem 14px`), 1px subtle border, deep box-shadow, slight rotation via a `--tilt` CSS variable so columns of polaroids can lean different directions. Currently lives in two components: `PeggyMartinScene.svelte` (`.gif-frame`) and `InstagramEmbed.svelte` (`.polaroid`). If you need it in a third place, consider extracting a shared `Polaroid.svelte`.
+
+### Fullscreen Post
+
+Set `fullscreen: true` in frontmatter to make the post own the entire viewport. `PostLayout.astro` then renders only `<slot />` — **no title, no back-link, no article chrome**. The post's Svelte component is responsible for everything visible.
+
+Each fullscreen post gets its own dedicated scene component in `src/components/` (see `BigfootScrollytelling.svelte`, `GradScrollytelling.svelte`, `Scrollytelling.svelte`, `PeggyMartinScene.svelte`). They share a few conventions:
+
+- **Back link** — render `<a class="back-link" href={backHref} onclick={handleBack}>&lt;&lt; go back</a>` pinned `position: fixed` top-left. Use the `resolveBack('/posts/')` + `handleBack` pair (copy from `Scrollytelling.svelte:35-46`) so the link honors `BASE_URL` and falls back to `history.back()` when there's history to pop.
+- **Title placement** — when needed, render the title as a small "chip" (rotated, bordered, accent-colored) positioned absolutely inside the scene rather than as an `<h1>` block (see `Scrollytelling.svelte:267-277` `.title-overlay h1`, or `PeggyMartinScene.svelte` `.title-chip`).
+- **Markdown in props** — caption/bubble text passed as plain string props can be processed inline with a small `mdInline(text)` helper (see any of the scrolly components) that handles `**bold**`, `*italic*`, links, and `\n`. Use `{@html mdInline(text)}` to render.
+- **Frontmatter** — `fullscreen: true` plus optional `excerpt` (shown in post lists, not in the post itself).
+
+Pattern for the MDX wrapper:
+
+```mdx
+---
+title: My Fullscreen Post
+date: 2026-05-19
+category: make
+excerpt: short tagline, used on post listing pages.
+fullscreen: true
+---
+
+import MyScene from '../../components/MyScene.svelte';
+
+<MyScene
+  client:load
+  title="my fullscreen post"
+  /* ...other props the scene needs */
+/>
+```
+
+### Assets
+
+- **Images** → `public/images/`. Reference in components as `images/foo.webp` (no leading slash); scene components apply `BASE_URL` themselves.
+- **Videos** → `public/videos/`. Prefer MP4 (h.264, `yuv420p`, even dimensions) over animated GIF — a typical timelapse gif shrinks 5-10× when re-encoded. Convert with:
+
+  ```
+  ffmpeg -i input.gif -vf "scale=-2:900" -c:v libx264 -pix_fmt yuv420p \
+    -crf 23 -preset slow -movflags +faststart -an output.mp4
+  ```
+
+  Embed with `<video src=... autoplay loop muted playsinline preload="auto">` — no controls, infinite loop, works in Safari (`playsinline` is required).
+- **Originals** (uncompressed source files) → `public/images/.originals/` and `public/videos/<post>/.originals/`. These are gitignored.
+
+### Voice & Tone
+
+Posts are written in a casual, lowercase, hand-drawn voice:
+- Lowercase throughout (titles too, in the chip / bubble UI).
+- Em-dashes (`—`) for asides and beats; sparse punctuation otherwise.
+- Short sentences. Concrete nouns. Avoid catalog-speak ("mid-century pieces", "pre-loved garments") in favor of plain ("old furniture", "thrifted clothes").
+- Match the tagline: *perfectly imperfect*. Hand-drawn aesthetic = a little tilt on frames, slightly rotated bubbles, photo-frame styling on images (see `PostImage.svelte` and `PeggyMartinScene.svelte`'s `.gif-frame`).
+
 ## Project Metadata
 
 - **Repository**: slesaad/squiggly-lines

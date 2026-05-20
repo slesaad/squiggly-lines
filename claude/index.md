@@ -72,6 +72,8 @@ import Component from '../../components/Component.svelte';
 <Component client:visible />
 ```
 
+**Fullscreen post** - Set `fullscreen: true` in frontmatter. `PostLayout` then renders only the slot — the post's Svelte component owns the entire viewport (back link, title placement, all chrome). Pattern: one dedicated scene component per fullscreen post (`BigfootScrollytelling`, `GradScrollytelling`, `PeggyMartinScene`). See **architecture.md → Adding Content → Fullscreen Post** for conventions (back-link, title chip, `mdInline` helper, mp4 over gif, voice & tone).
+
 ### Technology Stack
 
 - **Astro** - Static site generator with islands architecture
