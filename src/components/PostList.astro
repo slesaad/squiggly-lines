@@ -41,9 +41,7 @@ const filters = [
 
 {!page?.url.next && posts.length > 0 && (
   <div class="list-end">
-    <svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 5 C 10 0, 20 10, 30 5 S 50 0, 60 5 S 80 10, 100 5" stroke="currentColor" fill="none" stroke-width="1.5" vector-effect="non-scaling-stroke" />
-    </svg>
+    <div class="squiggle" aria-hidden="true"></div>
     {category ? (
       <p>that's everything in #{category} · <a href={`${base}posts/`}>see all posts &rarr;</a></p>
     ) : (

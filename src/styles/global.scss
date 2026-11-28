@@ -141,19 +141,22 @@ header a .tag {
     color: var(--text-color);
 }
 
-.header-squiggly-line {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 20px;
-    overflow: hidden;
-    color: var(--squiggly-color);
-}
-
-.header-squiggly-line svg {
+// Wavy lines: one tile (public/images/squiggle.svg) repeated across the width,
+// used as a mask so the waves keep their size on any screen and take their
+// colour from CSS (currentColor), which makes them follow the theme.
+.squiggle {
     display: block;
     width: 100%;
-    height: 100%;
+    height: 16px;
+    background-color: currentColor;
+    -webkit-mask: url('/images/squiggle.svg') left center / 480px 16px repeat-x;
+    mask: url('/images/squiggle.svg') left center / 480px 16px repeat-x;
+}
+
+.header-squiggle {
+    position: absolute;
+    bottom: 0;
+    color: var(--squiggly-color);
 }
 
 
@@ -257,22 +260,19 @@ footer {
     color: var(--footer-text);
     text-align: center;
     background-color: var(--footer-bg);
-    padding-top: 20px;
-}
 
-.squiggly-line {
-    position: absolute;
-    top: -20px;
-    width: 100%;
-    height: 40px;
-    overflow: hidden;
-    color: var(--footer-bg);
-}
-
-.squiggly-line svg {
-    display: block;
-    width: 100%;
-    height: 100%;
+    // The footer's own wavy top edge (same wave, filled), sitting just above it.
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 100%;
+        height: 24px;
+        background-color: var(--footer-bg);
+        -webkit-mask: url('/images/squiggle-edge.svg') left bottom / 720px 24px repeat-x;
+        mask: url('/images/squiggle-edge.svg') left bottom / 720px 24px repeat-x;
+    }
 }
 
 .footer-content {

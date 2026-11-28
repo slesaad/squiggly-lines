@@ -125,10 +125,8 @@
         font-size: 16px;
         color: var(--text-secondary);
 
-        svg {
-            display: block;
-            width: 120px;
-            height: 10px;
+        .squiggle {
+            width: 160px;
             margin: 0 auto 12px;
             color: var(--border-color);
         }

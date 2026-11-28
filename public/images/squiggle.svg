@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 16" width="480" height="16">
+  <!-- One tile of the site's wavy line. Starts and ends at the same height and
+       angle (y=8, heading up), so it repeats across the page without a seam.
+       Used as a CSS mask: the colour comes from CSS, not from this file. -->
+  <path d="M0 8 C 20 2, 42 3, 60 8 S 96 14, 120 9 S 150 3, 178 7 S 220 13, 246 8 S 272 2, 300 6 S 338 13, 362 9 S 396 3, 420 7 S 460 14, 480 8" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+</svg>
