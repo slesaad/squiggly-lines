@@ -1,4 +1,5 @@
 <script>
+  import { goBack } from '../lib/back';
   import { onMount } from 'svelte';
 
   let { video = '', alt = '', story = '', reflection = '', caption = '', title = '' } = $props();
@@ -16,10 +17,7 @@
   }
 
   function handleBack(e) {
-    if (window.history.length > 1) {
-      e.preventDefault();
-      window.history.back();
-    }
+    goBack(e);
   }
 
   onMount(() => {

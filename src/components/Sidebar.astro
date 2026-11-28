@@ -1,13 +1,13 @@
 ---
-import { SOCIAL, getBase } from '../consts';
+import { SOCIAL, CATEGORIES, getBase } from '../consts';
 import ThemeToggle from './ThemeToggle.astro';
 const base = getBase();
 const path = Astro.url.pathname;
 const isHome = path === base || path === base.replace(/\/$/, '');
-const isPosts = !isHome;
+const isPosts = ['posts', ...CATEGORIES].some((s) => path.startsWith(`${base}${s}`));
 ---
 
-<div class="sidebar">
+<div class:list={["sidebar", { compact: !isHome }]}>
   <div>
     <a href={base}><div class="profile-image" role="img" aria-label="Profile"></div></a>
   </div>

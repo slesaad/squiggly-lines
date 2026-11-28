@@ -9,11 +9,19 @@ import { SITE, getBase } from '../consts';
 
 interface Props {
   title?: string;
+  /** Used for search results and link previews. */
+  description?: string;
+  /** Preview image path relative to the site root (e.g. a post's cover). */
+  image?: string;
+  type?: 'website' | 'article';
   fullscreen?: boolean;
 }
 
-const { title, fullscreen = false } = Astro.props;
+const { title, description = SITE.description, image, type = 'website', fullscreen = false } = Astro.props;
 const base = getBase();
+const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const previewImage = new URL(`${base}${image ?? 'images/cool.png'}`, Astro.site);
 
 // Every page except fullscreen posts scrolls as a normal page, with the footer at the end.
 const flow = !fullscreen;
@@ -23,7 +31,16 @@ const flow = !fullscreen;
 <html lang="en-US" style={`--display-picture-light: url("${base}images/cool.png"); --display-picture-dark: url("${base}images/sleepy.png");`}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title ?? SITE.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={previewImage} />
+    <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -31,7 +48,7 @@ const flow = !fullscreen;
       href="https://fonts.googleapis.com/css2?family=Yomogi&family=Comforter+Brush&family=Mansalva&family=Schoolbell&family=Comic+Neue&display=swap"
       rel="stylesheet"
     />
-    <title>{title ?? SITE.name}</title>
+    <title>{pageTitle}</title>
     <ViewTransitions />
     <script is:inline>
       (function() {
@@ -42,6 +59,9 @@ const flow = !fullscreen;
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
+
+      // Lets "go back" links know the previous page was on this site.
+      document.addEventListener('astro:after-swap', () => { window.__sqSoftNav = true; });
 
       document.addEventListener('astro:before-swap', (e) => {
         const current = document.documentElement.getAttribute('data-theme');

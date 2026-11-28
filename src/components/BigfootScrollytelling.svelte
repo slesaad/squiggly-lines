@@ -1,4 +1,5 @@
 <script>
+  import { goBack } from '../lib/back';
   import { onMount } from 'svelte';
 
   let { title = '', src, steps = [], home = [-86.5861, 34.7304], homeZoom = 4 } = $props();
@@ -23,10 +24,7 @@
   }
 
   function handleBack(e) {
-    if (window.history.length > 1) {
-      e.preventDefault();
-      window.history.back();
-    }
+    goBack(e);
   }
 
   function mdInline(text) {

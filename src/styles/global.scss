@@ -6,7 +6,7 @@
     --footer-bg: black;
     --footer-text: white;
     --link-color: purple;
-    --border-color: rgba(249, 155, 68, 0.3);
+    --border-color: rgba(222, 120, 30, 0.55);
     --squiggly-color: black;
     --display-picture: var(--display-picture-light);
     --sidebar-width: 30%;
@@ -310,6 +310,29 @@ code {
         .content-wrapper {
             border-left: none;
             padding: 24px 24px 80px;
+        }
+
+        // Off the home page, phones get a slim bar instead of the full profile,
+        // so posts start near the top of the screen.
+        .sidebar.compact {
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 0 24px 12px;
+            border-bottom: 2px solid var(--border-color);
+
+            .profile-image {
+                width: 48px;
+                height: 48px;
+            }
+
+            .social {
+                display: none;
+            }
+
+            .theme-toggle {
+                margin-top: 0;
+            }
         }
     }
 
