@@ -10,6 +10,7 @@
     --squiggly-color: black;
     --display-picture: var(--display-picture-light);
     --sidebar-width: 30%;
+    --squiggle-width: 3200px; // drawn width of the squiggle line tile (two waves)
 }
 
 [data-theme="dark"] {
@@ -141,22 +142,34 @@ header a .tag {
     color: var(--text-color);
 }
 
-// Wavy lines: one tile (public/images/squiggle.svg) repeated across the width,
-// used as a mask so the waves keep their size on any screen and take their
-// colour from CSS (currentColor), which makes them follow the theme.
+// Wavy lines: the hand-drawn squiggle (public/images/squiggle.svg) drawn at a
+// fixed width (1600px per wave) and used as a mask, so it keeps its uneven shape instead of
+// stretching with the screen (very wide screens repeat it), and takes its colour
+// from CSS (currentColor), which makes it follow the theme.
 .squiggle {
     display: block;
     width: 100%;
-    height: 16px;
+    height: 30px;
     background-color: currentColor;
-    -webkit-mask: url('/images/squiggle.svg') left center / 480px 16px repeat-x;
-    mask: url('/images/squiggle.svg') left center / 480px 16px repeat-x;
+    -webkit-mask: url('/images/squiggle.svg') left center / var(--squiggle-width) 100% repeat-x;
+    mask: url('/images/squiggle.svg') left center / var(--squiggle-width) 100% repeat-x;
 }
 
-.header-squiggle {
+// The header keeps its original squiggle on purpose: one SVG wave stretched to
+// the full width, so it tapers and gets cut off at the bottom of its box.
+.header-squiggly-line {
     position: absolute;
     bottom: 0;
+    width: 100%;
+    height: 20px;
+    overflow: hidden;
     color: var(--squiggly-color);
+}
+
+.header-squiggly-line svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -268,10 +281,10 @@ footer {
         left: 0;
         right: 0;
         bottom: 100%;
-        height: 24px;
+        height: 20px;
         background-color: var(--footer-bg);
-        -webkit-mask: url('/images/squiggle-edge.svg') left bottom / 720px 24px repeat-x;
-        mask: url('/images/squiggle-edge.svg') left bottom / 720px 24px repeat-x;
+        -webkit-mask: url('/images/squiggle-edge.svg') left bottom / calc(var(--squiggle-width) / 2) 100% repeat-x;
+        mask: url('/images/squiggle-edge.svg') left bottom / calc(var(--squiggle-width) / 2) 100% repeat-x;
     }
 }
 
@@ -300,6 +313,11 @@ code {
 
 
 @media screen and (max-width: 780px) {
+    // Squeeze the squiggles a little on phones so more of the wave shows.
+    :root {
+        --squiggle-width: 1800px;
+    }
+
     body.layout-flow .main {
         .sidebar {
             position: static;
