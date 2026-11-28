@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from './PostCard.astro';
+import Pagination from './Pagination.astro';
+import { CATEGORIES, getBase } from '../consts';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+  /** Active category filter; undefined means "all". */
+  category?: string;
+  /** Index of the first post on this page, so numbering continues across pages. */
+  start?: number;
+  page?: { url: { prev?: string; next?: string } };
+}
+
+const { posts, category, start = 0, page } = Astro.props;
+const base = getBase();
+const filters = [
+  { label: 'all', href: `${base}posts/`, active: !category },
+  ...CATEGORIES.map((c) => ({ label: c, href: `${base}${c}/`, active: category === c })),
+];
+---
+
+<nav class="filters" aria-label="Filter posts by category">
+  {filters.map((f) => (
+    <a href={f.href} class:list={['chip', { active: f.active }]} aria-current={f.active ? 'page' : undefined}>
+      {f.label}
+    </a>
+  ))}
+</nav>
+
+<div class="post-list" style={`counter-reset: post-count ${start}`}>
+  {posts.length > 0 ? (
+    posts.map((post) => <PostCard post={post} />)
+  ) : (
+    <p>No posts yet in this category.</p>
+  )}
+</div>
+
+{page && <Pagination page={page} />}
+
+{!page?.url.next && posts.length > 0 && (
+  <div class="list-end">
+    <svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 5 C 10 0, 20 10, 30 5 S 50 0, 60 5 S 80 10, 100 5" stroke="currentColor" fill="none" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+    </svg>
+    {category ? (
+      <p>that's everything in #{category} · <a href={`${base}posts/`}>see all posts &rarr;</a></p>
+    ) : (
+      <p>that's all for now ✏️ more soon!</p>
+    )}
+  </div>
+)}

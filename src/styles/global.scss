@@ -60,43 +60,43 @@ footer {
     height: 8vh;
 }
 
-// Collapsed state for post/category pages
-body.layout-collapsed {
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: var(--sidebar-width);
-        border-right: 2px solid var(--border-color);
-        background-color: var(--bg-color);
-        z-index: 10;
-    }
+// Flow state (every page except fullscreen posts): the whole page scrolls normally.
+// Short pages still fill the screen with the footer at the bottom;
+// long pages push the footer to the end, after the last post.
+body.layout-flow {
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: visible;
 
-    footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: var(--sidebar-width);
-        border-right: 2px solid var(--border-color);
-        z-index: 10;
+    header, footer {
+        flex-shrink: 0;
     }
 
     .main {
-        height: 100vh;
+        height: auto;
+        flex: 1 0 auto;
 
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 15vh;
-            bottom: 8vh;
-            width: var(--sidebar-width);
-            z-index: 10;
+            position: sticky;
+            top: 12.5vh;
+            align-self: flex-start;
+            height: 75vh;
+            border-right: none;
         }
 
         .content-wrapper {
-            flex: 1;
-            max-height: 100vh;
-            margin-left: var(--sidebar-width);
+            max-height: none;
+            overflow: visible;
+            border-left: 2px solid var(--border-color);
+            padding-bottom: 80px; // room above the footer's squiggle
+            // .content keeps `margin: auto 0`: short pages (home) center vertically,
+            // long pages naturally start at the top.
+
+            // Post lists stay top-aligned so the filter chips never move.
+            .content:has(> .filters) {
+                margin: 0;
+            }
         }
     }
 }
@@ -209,28 +209,22 @@ header a .tag {
         }
 
         .menu {
+            display: flex;
+            gap: 20px;
+            font-size: 1.1em;
+
             a {
                 text-decoration: none;
-                padding-right: 8px;
-                border-right: 1px solid var(--border-color);
+                border-bottom: 2px solid transparent;
+                transition: color 0.2s, border-color 0.2s;
 
-                &:first-of-type {
-                    border-color: var(--text-color);
-                }
-
-                &:last-of-type {
-                    border: none;
-                }
-
-                &.all {
+                &:hover {
                     color: var(--accent-color);
-                    font-weight: bold;
-                    font-size: 1.1em;
                 }
 
                 &.active {
-                    text-decoration: underline;
                     color: var(--accent-color);
+                    border-bottom-color: var(--accent-color);
                 }
             }
         }
@@ -245,19 +239,6 @@ header a .tag {
         overflow-y: auto;
 
         padding: 56px;
-
-        .category-tag {
-            position: sticky;
-            top: 0;
-            align-self: flex-start;
-            margin-left: auto;
-            padding: 4px 12px;
-            font-size: 14px;
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            border-radius: 16px;
-            white-space: nowrap;
-        }
 
         .content {
             width: 100%;
@@ -319,6 +300,19 @@ code {
 
 
 @media screen and (max-width: 780px) {
+    body.layout-flow .main {
+        .sidebar {
+            position: static;
+            height: auto;
+            padding-bottom: 16px;
+        }
+
+        .content-wrapper {
+            border-left: none;
+            padding: 24px 24px 80px;
+        }
+    }
+
     .main {
         flex-direction: column;
         padding-top: 16px;

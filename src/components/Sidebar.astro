@@ -3,7 +3,8 @@ import { SOCIAL, getBase } from '../consts';
 import ThemeToggle from './ThemeToggle.astro';
 const base = getBase();
 const path = Astro.url.pathname;
-const isActive = (segment: string) => path.startsWith(`${base}${segment}`);
+const isHome = path === base || path === base.replace(/\/$/, '');
+const isPosts = !isHome;
 ---
 
 <div class="sidebar">
@@ -17,12 +18,9 @@ const isActive = (segment: string) => path.startsWith(`${base}${segment}`);
     <a href={SOCIAL.email}><img class="icon email" src={`${base}images/icons/email.png`} alt="email" /></a>
     <a href={SOCIAL.linkedin}><img class="icon linkedin" src={`${base}images/icons/linkedin.png`} alt="linkedin" /></a>
   </div>
-  <div class="menu">
-    <a href={`${base}posts`} class:list={["all", { active: path === `${base}posts/` || path === `${base}posts` }]}>all</a>
-    <a href={`${base}art`} class:list={[{ active: isActive("art") }]}>art</a>
-    <a href={`${base}dev`} class:list={[{ active: isActive("dev") }]}>dev</a>
-    <a href={`${base}make`} class:list={[{ active: isActive("make") }]}>make</a>
-    <a href={`${base}misc`} class:list={[{ active: isActive("misc") }]}>misc</a>
-  </div>
+  <nav class="menu" aria-label="Site">
+    <a href={base} class:list={[{ active: isHome }]} aria-current={isHome ? 'page' : undefined}>home</a>
+    <a href={`${base}posts/`} class:list={[{ active: isPosts }]} aria-current={isPosts ? 'page' : undefined}>posts</a>
+  </nav>
   <ThemeToggle />
 </div>

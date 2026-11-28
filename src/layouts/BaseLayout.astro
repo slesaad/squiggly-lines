@@ -5,22 +5,18 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Sidebar from '../components/Sidebar.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import { SITE, getBase, CATEGORIES } from '../consts';
+import { SITE, getBase } from '../consts';
 
 interface Props {
   title?: string;
-  category?: string;
-  collapsed?: boolean;
   fullscreen?: boolean;
 }
 
-const { title, category, collapsed = false, fullscreen = false } = Astro.props;
+const { title, fullscreen = false } = Astro.props;
 const base = getBase();
 
-// Determine if this page should have collapsed layout
-const path = Astro.url.pathname;
-const isPostPage = /\/posts\/[^/]/.test(path);
-const shouldCollapse = !fullscreen && (collapsed || isPostPage);
+// Every page except fullscreen posts scrolls as a normal page, with the footer at the end.
+const flow = !fullscreen;
 ---
 
 <!doctype html>
@@ -55,12 +51,11 @@ const shouldCollapse = !fullscreen && (collapsed || isPostPage);
       });
     </script>
   </head>
-  <body class:list={[{ 'layout-collapsed': shouldCollapse, 'layout-fullscreen': fullscreen }]}>
+  <body class:list={[{ 'layout-fullscreen': fullscreen, 'layout-flow': flow }]}>
     {!fullscreen && <Header />}
     <div class="main">
       {!fullscreen && <Sidebar />}
       <div class="content-wrapper">
-        {category && <span class="category-tag">#{category.toLowerCase()}</span>}
         <div class="content">
           <slot />
         </div>

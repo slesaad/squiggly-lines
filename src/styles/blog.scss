@@ -17,6 +17,15 @@
         font-weight: bold;
     }
 
+    // A post page on its own isn't part of a numbered list.
+    &.single {
+        padding-left: 12px;
+
+        &::before {
+            content: none;
+        }
+    }
+
     &:nth-child(odd) {
         transform: rotate(0.4deg);
     }
@@ -81,6 +90,70 @@
     }
 }
 
-.pagination {
-    margin-top: 24px;
+// Nested under .content to win over the generic `.content-wrapper a` link color.
+.content {
+    .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        a.chip {
+            padding: 2px 14px;
+            font-size: 16px;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: border-color 0.2s, color 0.2s;
+
+            &:hover {
+                border-color: var(--accent-color);
+                color: var(--accent-color);
+            }
+
+            &.active {
+                color: var(--bg-color);
+                background-color: var(--accent-color);
+                border-color: var(--accent-color);
+            }
+        }
+    }
+
+    .list-end {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 16px;
+        color: var(--text-secondary);
+
+        svg {
+            display: block;
+            width: 120px;
+            height: 10px;
+            margin: 0 auto 12px;
+            color: var(--border-color);
+        }
+
+        a {
+            color: var(--accent-color);
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 32px;
+        font-size: 18px;
+
+        a {
+            color: var(--accent-color);
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
 }

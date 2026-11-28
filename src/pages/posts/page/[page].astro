@@ -1,0 +1,28 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostList from '../../../components/PostList.astro';
+import { PAGINATION, getBase } from '../../../consts';
+import { getSortedPosts, pageCount } from '../../../lib/posts';
+import '../../../styles/blog.scss';
+
+// Page 1 lives at /posts/; this route covers /posts/page/2/ onwards.
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getSortedPosts();
+  const total = pageCount(posts.length);
+  return Array.from({ length: total - 1 }, (_, i) => {
+    const n = i + 2;
+    return { params: { page: String(n) }, props: { posts, n, total } };
+  });
+};
+
+const { posts, n, total } = Astro.props;
+const base = getBase();
+const start = (n - 1) * PAGINATION.perPage;
+const prev = n === 2 ? `${base}posts/` : `${base}posts/page/${n - 1}/`;
+const next = n < total ? `${base}posts/page/${n + 1}/` : undefined;
+---
+
+<BaseLayout title={`Posts · page ${n}`}>
+  <PostList posts={posts.slice(start, start + PAGINATION.perPage)} start={start} page={{ url: { prev, next } }} />
+</BaseLayout>
