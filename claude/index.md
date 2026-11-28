@@ -14,7 +14,7 @@ This folder contains documentation for the Squiggly Lines project, intended to h
 ### Project Summary
 
 **Squiggly Lines** is an Astro-based personal blog with a hand-drawn aesthetic, featuring:
-- Multi-category blog posts (art, dev, make, misc) via a single dynamic route
+- Blog posts with an optional, free-form category; category pages and filter chips are generated from the categories posts use
 - Dark/light theme with CSS custom properties and localStorage persistence
 - Optional cover images on posts
 - Interactive content via Svelte components in MDX
@@ -25,8 +25,9 @@ This folder contains documentation for the Squiggly Lines project, intended to h
 
 | File | Purpose |
 |------|---------|
-| `astro.config.mjs` | Astro configuration (site, base URL, integrations) |
-| `src/consts.ts` | Site constants, categories, and helper functions |
+| `astro.config.mjs` | Astro configuration (site URL, integrations) |
+| `src/consts.ts` | Site constants (name, description, social links, pagination) and `getBase()` |
+| `src/lib/posts.ts` | `getSortedPosts()`, `getCategories()`, `pageCount()` |
 | `src/content.config.ts` | Content collection schema |
 | `src/layouts/BaseLayout.astro` | Master page template (theme init, layout) |
 | `src/components/ThemeToggle.astro` | Dark/light mode toggle |

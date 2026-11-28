@@ -1,4 +1,5 @@
 <script>
+  import { goBack } from '../lib/back';
   import { onMount } from 'svelte';
 
   let {
@@ -75,10 +76,7 @@
   }
 
   function handleBack(e) {
-    if (window.history.length > 1) {
-      e.preventDefault();
-      window.history.back();
-    }
+    goBack(e);
   }
 
   const PHOTO_KINDS = new Set([

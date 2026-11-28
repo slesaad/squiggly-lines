@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getBase } from '../consts';
+
+const base = getBase();
+---
+
+<BaseLayout title="page not found" description="this page wandered off.">
+  <div class="not-found">
+    <p class="code">404</p>
+    <h1>oops, this page wandered off</h1>
+    <p>the link might be old, or there might be a typo in it.</p>
+    <p class="links">
+      <a href={base}>go home</a>
+      <span aria-hidden="true">·</span>
+      <a href={`${base}posts/`}>see all posts &rarr;</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .code {
+    font-size: 96px;
+    line-height: 1;
+    color: var(--border-color);
+  }
+
+  h1 {
+    font-size: 32px;
+    color: var(--accent-color);
+    margin: 8px 0 16px;
+  }
+
+  .links {
+    margin-top: 24px;
+  }
+
+  .not-found .links a {
+    color: var(--accent-color);
+  }
+
+  .not-found .links a:hover {
+    text-decoration: underline;
+  }
+</style>

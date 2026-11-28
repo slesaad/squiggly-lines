@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goBack } from '../lib/back';
   import { onMount } from 'svelte';
   import { Tween } from 'svelte/motion';
   import { cubicOut } from 'svelte/easing';
@@ -324,10 +325,7 @@
   });
 
   function handleBack(e: MouseEvent) {
-    if (window.history.length > 1) {
-      e.preventDefault();
-      window.history.back();
-    }
+    goBack(e);
   }
 </script>
 

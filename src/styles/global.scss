@@ -6,10 +6,11 @@
     --footer-bg: black;
     --footer-text: white;
     --link-color: purple;
-    --border-color: rgba(249, 155, 68, 0.3);
+    --border-color: rgba(222, 120, 30, 0.55);
     --squiggly-color: black;
     --display-picture: var(--display-picture-light);
     --sidebar-width: 30%;
+    --squiggle-width: 3200px; // drawn width of the squiggle line tile (two waves)
 }
 
 [data-theme="dark"] {
@@ -31,18 +32,17 @@
     box-sizing: border-box;
 }
 
-body {
-    font-size: 20px;
-}
-
+// Page layout: header, then sidebar + content, then footer. The whole page
+// scrolls normally; short pages still fill the screen with the footer at the
+// bottom, long pages push the footer to the end. Fullscreen posts override
+// this further down.
 body {
     display: flex;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-
     flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
 
+    font-size: 20px;
     font-family: 'Schoolbell', cursive;
 
     background-color: var(--bg-color);
@@ -50,7 +50,7 @@ body {
 }
 
 header, footer {
-    height: 15vh;
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -60,49 +60,12 @@ footer {
     height: 8vh;
 }
 
-// Collapsed state for post/category pages
-body.layout-collapsed {
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: var(--sidebar-width);
-        border-right: 2px solid var(--border-color);
-        background-color: var(--bg-color);
-        z-index: 10;
-    }
-
-    footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: var(--sidebar-width);
-        border-right: 2px solid var(--border-color);
-        z-index: 10;
-    }
-
-    .main {
-        height: 100vh;
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 15vh;
-            bottom: 8vh;
-            width: var(--sidebar-width);
-            z-index: 10;
-        }
-
-        .content-wrapper {
-            flex: 1;
-            max-height: 100vh;
-            margin-left: var(--sidebar-width);
-        }
-    }
-}
-
-// Fullscreen state - no sidebar, header, footer
+// Fullscreen posts: no header, sidebar or footer. The post's own component
+// fills the window and scrolls inside .content-wrapper.
 body.layout-fullscreen {
+    height: 100vh;
+    overflow: hidden;
+
     .main {
         height: 100vh;
         padding-top: 0;
@@ -110,8 +73,8 @@ body.layout-fullscreen {
         .content-wrapper {
             width: 100%;
             height: 100vh;
-            max-height: 100vh;
             padding: 0;
+            border-left: none;
             overflow-y: auto;
             display: block;
 
@@ -124,8 +87,8 @@ body.layout-fullscreen {
 }
 
 header {
+    height: 15vh;
     position: relative;
-    display: flex;
     flex-direction: column;
     color: var(--accent-color);
     padding: 16px 0;
@@ -141,6 +104,21 @@ header a .tag {
     color: var(--text-color);
 }
 
+// Wavy lines: the hand-drawn squiggle (public/images/squiggle.svg) drawn at a
+// fixed width (1600px per wave) and used as a mask, so it keeps its uneven shape instead of
+// stretching with the screen (very wide screens repeat it), and takes its colour
+// from CSS (currentColor), which makes it follow the theme.
+.squiggle {
+    display: block;
+    width: 100%;
+    height: 30px;
+    background-color: currentColor;
+    -webkit-mask: url('/images/squiggle.svg') left center / var(--squiggle-width) 100% repeat-x;
+    mask: url('/images/squiggle.svg') left center / var(--squiggle-width) 100% repeat-x;
+}
+
+// The header keeps its original squiggle on purpose: one SVG wave stretched to
+// the full width, so it tapers and gets cut off at the bottom of its box.
 .header-squiggly-line {
     position: absolute;
     bottom: 0;
@@ -158,22 +136,22 @@ header a .tag {
 
 
 .main {
-    height: 75vh;
-
     display: flex;
     flex-direction: row;
-    flex: 1;
+    flex: 1 0 auto;
 
+    // Stays in view while the content scrolls past it.
     .sidebar {
         flex: 0 0 var(--sidebar-width);
-        border-right: 2px solid var(--border-color);
+        position: sticky;
+        top: 12.5vh;
+        align-self: flex-start;
+        height: 75vh;
 
         display: flex;
         flex-direction: column;
-
         justify-content: center;
         align-items: center;
-
 
         .profile-image {
             border-radius: 50%;
@@ -209,28 +187,22 @@ header a .tag {
         }
 
         .menu {
+            display: flex;
+            gap: 20px;
+            font-size: 1.1em;
+
             a {
                 text-decoration: none;
-                padding-right: 8px;
-                border-right: 1px solid var(--border-color);
+                border-bottom: 2px solid transparent;
+                transition: color 0.2s, border-color 0.2s;
 
-                &:first-of-type {
-                    border-color: var(--text-color);
-                }
-
-                &:last-of-type {
-                    border: none;
-                }
-
-                &.all {
+                &:hover {
                     color: var(--accent-color);
-                    font-weight: bold;
-                    font-size: 1.1em;
                 }
 
                 &.active {
-                    text-decoration: underline;
                     color: var(--accent-color);
+                    border-bottom-color: var(--accent-color);
                 }
             }
         }
@@ -238,31 +210,21 @@ header a .tag {
 
     .content-wrapper {
         flex: 1;
-        max-height: 75vh;
         display: flex;
         position: relative;
+        padding: 56px 56px 80px; // extra room above the footer's squiggle
+        border-left: 2px solid var(--border-color);
 
-        overflow-y: auto;
-
-        padding: 56px;
-
-        .category-tag {
-            position: sticky;
-            top: 0;
-            align-self: flex-start;
-            margin-left: auto;
-            padding: 4px 12px;
-            font-size: 14px;
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            border-radius: 16px;
-            white-space: nowrap;
-        }
-
+        // Short pages (home, 404) center vertically; long pages start at the top.
         .content {
             width: 100%;
             margin: auto 0;
             counter-reset: post-count;
+        }
+
+        // Post lists stay top-aligned so the filter chips never move.
+        .content:has(> .filters) {
+            margin: 0;
         }
 
         a {
@@ -276,30 +238,24 @@ footer {
     color: var(--footer-text);
     text-align: center;
     background-color: var(--footer-bg);
-    padding-top: 20px;
-}
 
-.squiggly-line {
-    position: absolute;
-    top: -20px;
-    width: 100%;
-    height: 40px;
-    overflow: hidden;
-    color: var(--footer-bg);
-}
-
-.squiggly-line svg {
-    display: block;
-    width: 100%;
-    height: 100%;
+    // The footer's own wavy top edge (same wave, filled), sitting just above it.
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 100%;
+        height: 20px;
+        background-color: var(--footer-bg);
+        -webkit-mask: url('/images/squiggle-edge.svg') left bottom / calc(var(--squiggle-width) / 2) 100% repeat-x;
+        mask: url('/images/squiggle-edge.svg') left bottom / calc(var(--squiggle-width) / 2) 100% repeat-x;
+    }
 }
 
 .footer-content {
     padding: 20px 0;
 }
-
-
-
 
 a {
     text-decoration: none;
@@ -317,19 +273,49 @@ code {
     display: none;
 }
 
-
 @media screen and (max-width: 780px) {
+    // Squeeze the squiggles a little on phones so more of the wave shows.
+    :root {
+        --squiggle-width: 1800px;
+    }
+
     .main {
         flex-direction: column;
         padding-top: 16px;
 
         .sidebar {
+            position: static;
             width: 100%;
-            border-right: none;
+            height: auto;
+            padding-bottom: 16px;
         }
 
         .content-wrapper {
-            justify-content: center;
+            border-left: none;
+            padding: 24px 24px 80px;
+        }
+
+        // Off the home page, phones get a slim bar instead of the full profile,
+        // so posts start near the top of the screen.
+        .sidebar.compact {
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 0 24px 12px;
+            border-bottom: 2px solid var(--border-color);
+
+            .profile-image {
+                width: 48px;
+                height: 48px;
+            }
+
+            .social {
+                display: none;
+            }
+
+            .theme-toggle {
+                margin-top: 0;
+            }
         }
     }
 }

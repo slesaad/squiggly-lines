@@ -1,4 +1,5 @@
 <script>
+  import { goBack } from '../lib/back';
   import { onMount } from 'svelte';
 
   let { title = '', steps = [] } = $props();
@@ -39,10 +40,7 @@
   }
 
   function handleBack(e) {
-    if (window.history.length > 1) {
-      e.preventDefault();
-      window.history.back();
-    }
+    goBack(e);
   }
 
   function resolve(src) {

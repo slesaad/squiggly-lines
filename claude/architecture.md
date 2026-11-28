@@ -25,8 +25,10 @@ squiggly-lines/
 ├── package.json             # Dependencies and scripts
 ├── public/                  # Static assets (copied as-is)
 │   └── images/
-│       ├── cool.png         # Profile image (light theme)
+│       ├── cool.png         # Profile image (light theme); also the default link-preview image
 │       ├── sleepy.png       # Profile image (dark theme)
+│       ├── squiggle.svg     # Squiggle line tile (CSS mask, see Styling → Squiggles)
+│       ├── squiggle-edge.svg # Footer's wavy top edge tile
 │       └── icons/           # Social media icons
 ├── src/
 │   ├── components/
@@ -34,22 +36,27 @@ squiggly-lines/
 │   │   ├── Footer.astro     # Site footer with squiggly line
 │   │   ├── Sidebar.astro    # Profile, social links, nav, theme toggle
 │   │   ├── ThemeToggle.astro # Dark/light mode toggle button
+│   │   ├── PostList.astro   # Post list: category filter chips, cards, pagination, end note
 │   │   ├── PostCard.astro   # Blog post preview card
-│   │   └── Pagination.astro # Prev/next navigation
+│   │   └── Pagination.astro # "newer / older posts" navigation
 │   ├── layouts/
-│   │   ├── BaseLayout.astro # Master layout (header, sidebar, footer, theme init)
+│   │   ├── BaseLayout.astro # Master layout (header, sidebar, footer, theme init, meta/OG tags)
 │   │   └── PostLayout.astro # Individual post layout (back link, article, date)
 │   ├── pages/
-│   │   ├── index.astro      # Home page
-│   │   ├── blog/[...page].astro         # All posts (paginated)
-│   │   ├── [category]/[...page].astro   # Dynamic category route (art/dev/make/misc)
+│   │   ├── index.astro      # Home page (intro + latest posts)
+│   │   ├── 404.astro        # Not-found page
+│   │   ├── posts/index.astro            # All posts, page 1
+│   │   ├── posts/page/[page].astro      # All posts, page 2+ (/posts/page/2/)
+│   │   ├── [category]/[...page].astro   # One paginated route per category in use
 │   │   └── posts/[...slug].astro        # Individual post pages
 │   ├── content/
 │   │   └── posts/           # Blog posts (Markdown/MDX)
 │   ├── styles/
 │   │   ├── global.scss      # CSS variables, layout, typography, responsive
-│   │   └── blog.scss        # Post cards, pagination, back link
-│   ├── consts.ts            # Site config, social links, categories, getBase()
+│   │   └── blog.scss        # Post cards, filter chips, pagination, back link
+│   ├── lib/posts.ts         # getSortedPosts(), getCategories(), pageCount()
+│   ├── lib/back.ts          # Shared "go back" link handler
+│   ├── consts.ts            # Site config, social links, pagination, getBase()
 │   └── content.config.ts    # Content collection schema
 ├── .github/workflows/
 │   └── astro.yml            # GitHub Actions deployment
@@ -63,29 +70,37 @@ squiggly-lines/
 ### Layout Hierarchy
 
 ```
-BaseLayout.astro (Master Layout)
+BaseLayout.astro (Master Layout; props: title, description, image, type, fullscreen)
 ├── <head>
-│   ├── Meta tags, Google Fonts, Global styles
-│   └── Theme flash prevention script (reads localStorage)
+│   ├── Meta description, canonical, Open Graph tags, Google Fonts, Global styles
+│   │   (title becomes "<title> · squiggly lines"; preview image defaults to cool.png)
+│   └── Inline script: theme flash prevention (reads localStorage), keeps the theme
+│       across client-side navigations, and sets window.__sqSoftNav for "go back" links
 ├── <html> (sets --display-picture-light/dark CSS vars from base path)
 ├── Header.astro
 │   ├── Site title + tagline
-│   └── SVG squiggly line (stroke="currentColor")
+│   └── Squiggly line: the original stretched SVG (kept on purpose, see Styling → Squiggles)
 ├── <div class="main">
 │   ├── Sidebar.astro
 │   │   ├── Profile image (CSS background-image, swaps per theme)
 │   │   ├── Social links
-│   │   ├── Category nav (active state highlighted)
-│   │   └── ThemeToggle.astro (sun/moon button)
+│   │   ├── Site nav: home · posts (active state highlighted)
+│   │   ├── ThemeToggle.astro (sun/moon button)
+│   │   └── On phones, off the home page: `.compact` slim bar (small avatar, nav, toggle)
 │   └── Content Wrapper
-│       ├── Category tag pill (optional, e.g. #art)
-│       └── <slot /> (page content)
+│       └── <slot /> (page content; post lists render PostList.astro:
+│           category filter chips, cards, pagination, end-of-list note)
 └── Footer.astro
-    ├── SVG squiggly line (fill="currentColor")
-    └── Copyright
+    └── Copyright (the wavy top edge is the footer's own ::before, see Styling → Squiggles)
 
-PostLayout.astro (extends BaseLayout)
-├── Back link (<< go back)
+Page layout: the whole page scrolls normally. Header on top, sticky sidebar on the
+left, content on the right, footer at the end (pushed to the bottom of the window on
+short pages). Fullscreen posts (`fullscreen: true`) drop the header, sidebar and
+footer: `body.layout-fullscreen` locks the window and the post's component scrolls
+inside `.content-wrapper`.
+
+PostLayout.astro (extends BaseLayout; passes the post's excerpt/cover as description/image)
+├── Back link (<< go back; handled by goBack() from src/lib/back.ts)
 └── Article wrapper
     ├── Title
     ├── <slot /> (rendered markdown)
@@ -107,15 +122,28 @@ PostLayout.astro (extends BaseLayout)
 |----------|-------|------|
 | `--accent-color` | `#c23616` | `#e84118` |
 | `--text-color` | `black` | `#e0e0e0` |
-| `--bg-color` | `white` | `#1a1a2e` |
-| `--footer-bg` | `black` | `#0f0f1a` |
+| `--text-secondary` | `#333` | `#aaa` |
+| `--bg-color` | `white` | `#212327` |
+| `--footer-bg` | `black` | `#080f18` |
+| `--footer-text` | `white` | `#e0e0e0` |
 | `--link-color` | `purple` | `#bb86fc` |
+| `--border-color` | `rgba(222, 120, 30, 0.55)` | `rgba(224, 108, 0, 0.5)` |
 | `--squiggly-color` | `black` | `#e0e0e0` |
 | `--display-picture` | `cool.png` | `sleepy.png` |
 
-### SVG Adaptation
+Not theme-dependent: `--sidebar-width` (30%) and `--squiggle-width` (drawn width of the squiggle tile; smaller on phones).
 
-SVG squiggly lines use `currentColor` for stroke/fill, inheriting from CSS `color` property which is set via theme variables.
+### Squiggles
+
+Squiggles take their colour from CSS (`currentColor` / theme variables), so they follow the theme.
+
+- **Header** — the original inline SVG in `Header.astro`, stretched to the full width with `preserveAspectRatio="none"`. Kept on purpose: the stretching makes the line taper, and its dip gets cut off at the bottom of the 20px box.
+- **Everything else** uses tiles in `public/images/` as CSS masks, drawn at a fixed width so they keep their uneven shape instead of stretching with the screen (very wide screens repeat them):
+  - `.squiggle` (global.scss) — a line in `currentColor`, from `squiggle.svg` (the header wave plus a rotated copy, so it repeats without a kink). Used for the home page divider.
+  - `footer::before` — the footer's wavy top edge, from `squiggle-edge.svg` (the original footer wave, filled).
+- **End-of-list note** — a small inline SVG (`.mini-squiggle` in PostList), since it's always 160px wide.
+
+The mask URLs are root-absolute (`/images/...`), which assumes the site is served from `/` (it is: custom domain, no `base`).
 
 ### Profile Image
 
@@ -129,10 +157,11 @@ Uses CSS `background-image: var(--display-picture)` where the URL values (includ
 schema: z.object({
   title: z.string(),
   date: z.coerce.date(),
-  category: z.enum(['art', 'dev', 'make', 'misc']),
+  category: z.string().optional(),    // Free-form, lowercased; slug-safe; not a reserved top-level name
   excerpt: z.string().optional(),
-  cover: z.string().optional(),       // Cover image path (base path auto-prepended)
+  cover: z.string().optional(),       // Cover image path (base path auto-prepended); also the link-preview image
   draft: z.boolean().default(false),
+  fullscreen: z.boolean().default(false), // Post's own component owns the whole window
 })
 ```
 
@@ -148,11 +177,12 @@ schema: z.object({
 | File | Route | Description |
 |------|-------|-------------|
 | `pages/index.astro` | `/` | Home page |
-| `pages/blog/[...page].astro` | `/blog`, `/blog/2` | All posts (paginated) |
-| `pages/[category]/[...page].astro` | `/art`, `/dev`, `/make`, `/misc` | Dynamic category (paginated) |
+| `pages/posts/index.astro` + `pages/posts/page/[page].astro` | `/posts/`, `/posts/page/2/` | All posts (paginated) |
+| `pages/[category]/[...page].astro` | `/art/`, `/plants/`, `/plants/2/` | One category (paginated) |
 | `pages/posts/[...slug].astro` | `/posts/bigfoot` | Individual posts |
+| `pages/404.astro` | any unknown URL | Not-found page |
 
-Categories are defined in `consts.ts` as `CATEGORIES` array. The single dynamic route generates pages for all categories.
+Categories aren't a fixed list: `getCategories()` collects the categories used by published posts, and the dynamic route generates a page (and PostList a filter chip) for each. A post's category is optional; posts without one appear only under "all". Category names can't collide with other top-level routes or `public/` folders (`posts`, `photos`, ...); the schema rejects those with a clear error.
 
 ## Styling
 
@@ -163,13 +193,13 @@ Categories are defined in `consts.ts` as `CATEGORIES` array. The single dynamic 
 | Accent color | `#c23616` (rust/coral) |
 | Font family | `Schoolbell` (cursive, hand-drawn) |
 | Mobile breakpoint | `780px` |
-| Layout | Flexbox, 35%/65% sidebar/content split |
-| Links | Purple with colon decorators (`:link:`) |
+| Layout | Flexbox, 30% sticky sidebar / content; document scrolls normally |
+| Links | `--link-color` (purple) inside content |
 
 ### SCSS Architecture
 
-- `global.scss` — CSS custom properties, base layout, responsive breakpoints
-- `blog.scss` — Post card styles, back link, pagination
+- `global.scss` — CSS custom properties, page layout (+ fullscreen override), squiggles, responsive breakpoints
+- `blog.scss` — Post card styles, filter chips, pagination, end-of-list note, back link
 
 ## Build & Deployment
 
@@ -185,8 +215,7 @@ npm run preview  # Preview production build
 
 ```javascript
 export default defineConfig({
-  site: 'https://slesaad.github.io',
-  base: '/squiggly-lines',
+  site: 'https://squiggles.slesa.com.np',   // custom domain (public/CNAME), served from /
   integrations: [mdx(), sitemap(), svelte()],
 });
 ```
@@ -248,8 +277,8 @@ Set `fullscreen: true` in frontmatter to make the post own the entire viewport. 
 
 Each fullscreen post gets its own dedicated scene component in `src/components/` (see `BigfootScrollytelling.svelte`, `GradScrollytelling.svelte`, `Scrollytelling.svelte`, `PeggyMartinScene.svelte`). They share a few conventions:
 
-- **Back link** — render `<a class="back-link" href={backHref} onclick={handleBack}>&lt;&lt; go back</a>` pinned `position: fixed` top-left. Use the `resolveBack('/posts/')` + `handleBack` pair (copy from `Scrollytelling.svelte:35-46`) so the link honors `BASE_URL` and falls back to `history.back()` when there's history to pop.
-- **Title placement** — when needed, render the title as a small "chip" (rotated, bordered, accent-colored) positioned absolutely inside the scene rather than as an `<h1>` block (see `Scrollytelling.svelte:267-277` `.title-overlay h1`, or `PeggyMartinScene.svelte` `.title-chip`).
+- **Back link** — render `<a class="back-link" href={backHref} onclick={handleBack}>&lt;&lt; go back</a>` pinned `position: fixed` top-left. Use `resolveBack('/posts/')` for the href (honors `BASE_URL`) and have `handleBack` call `goBack(e)` from `src/lib/back.ts` (see `Scrollytelling.svelte`). `goBack` only steps back in history when the previous page was on this site; otherwise the link goes to `/posts/`, so visitors arriving from Instagram or Google aren't sent off the site.
+- **Title placement** — when needed, render the title as a small "chip" (rotated, bordered, accent-colored) positioned absolutely inside the scene rather than as an `<h1>` block (see `.title-overlay h1` in `Scrollytelling.svelte`, or `PeggyMartinScene.svelte` `.title-chip`).
 - **Markdown in props** — caption/bubble text passed as plain string props can be processed inline with a small `mdInline(text)` helper (see any of the scrolly components) that handles `**bold**`, `*italic*`, links, and `\n`. Use `{@html mdInline(text)}` to render.
 - **Frontmatter** — `fullscreen: true` plus optional `excerpt` (shown in post lists, not in the post itself).
 

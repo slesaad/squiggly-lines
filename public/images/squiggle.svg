@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3200 30" width="3200" height="30">
+  <!-- The original header squiggle (a 100x20 path) at 1600px wide, followed by a
+       copy rotated 180°. The copy joins the original smoothly at both ends, so
+       the 3200px tile repeats on very wide screens without a kink.
+       The uneven scale(16, 1) is deliberate: like the old stretched SVG, it makes
+       the stroke thick on steep parts and thin on flat ones, like a pen line.
+       Shifted down 4px so the dips aren't clipped.
+       Used as a CSS mask: the colour comes from CSS, not from this file. -->
+  <g transform="translate(0 4) scale(16 1)" fill="none" stroke="#000" stroke-width="2">
+    <path id="wave" d="M0 10 C 10 0, 20 20, 30 10 S 50 10, 60 20, 80 0, 100 10"/>
+    <use href="#wave" transform="rotate(180 100 10)"/>
+  </g>
+</svg>
