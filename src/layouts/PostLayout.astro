@@ -13,10 +13,12 @@ const { title, date, fullscreen, excerpt, cover } = post.data;
 const base = getBase();
 
 function formatDate(date: Date): string {
+  // Frontmatter dates are midnight UTC; format in UTC so they don't slip a day.
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'UTC',
   });
 }
 ---
