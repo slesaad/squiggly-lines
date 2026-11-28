@@ -6,7 +6,6 @@ export function getBase(): string {
 
 export const SITE = {
   name: 'squiggly lines',
-  title: 'squiggly lines',
   tagline: 'perfectly imperfect',
   description: "slesa's little corner of the internet: art, code, things i make, and life in general.",
   author: 'slesa',

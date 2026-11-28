@@ -32,18 +32,17 @@
     box-sizing: border-box;
 }
 
-body {
-    font-size: 20px;
-}
-
+// Page layout: header, then sidebar + content, then footer. The whole page
+// scrolls normally; short pages still fill the screen with the footer at the
+// bottom, long pages push the footer to the end. Fullscreen posts override
+// this further down.
 body {
     display: flex;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-
     flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
 
+    font-size: 20px;
     font-family: 'Schoolbell', cursive;
 
     background-color: var(--bg-color);
@@ -51,7 +50,7 @@ body {
 }
 
 header, footer {
-    height: 15vh;
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,49 +60,12 @@ footer {
     height: 8vh;
 }
 
-// Flow state (every page except fullscreen posts): the whole page scrolls normally.
-// Short pages still fill the screen with the footer at the bottom;
-// long pages push the footer to the end, after the last post.
-body.layout-flow {
-    height: auto;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: visible;
-
-    header, footer {
-        flex-shrink: 0;
-    }
-
-    .main {
-        height: auto;
-        flex: 1 0 auto;
-
-        .sidebar {
-            position: sticky;
-            top: 12.5vh;
-            align-self: flex-start;
-            height: 75vh;
-            border-right: none;
-        }
-
-        .content-wrapper {
-            max-height: none;
-            overflow: visible;
-            border-left: 2px solid var(--border-color);
-            padding-bottom: 80px; // room above the footer's squiggle
-            // .content keeps `margin: auto 0`: short pages (home) center vertically,
-            // long pages naturally start at the top.
-
-            // Post lists stay top-aligned so the filter chips never move.
-            .content:has(> .filters) {
-                margin: 0;
-            }
-        }
-    }
-}
-
-// Fullscreen state - no sidebar, header, footer
+// Fullscreen posts: no header, sidebar or footer. The post's own component
+// fills the window and scrolls inside .content-wrapper.
 body.layout-fullscreen {
+    height: 100vh;
+    overflow: hidden;
+
     .main {
         height: 100vh;
         padding-top: 0;
@@ -111,8 +73,8 @@ body.layout-fullscreen {
         .content-wrapper {
             width: 100%;
             height: 100vh;
-            max-height: 100vh;
             padding: 0;
+            border-left: none;
             overflow-y: auto;
             display: block;
 
@@ -125,8 +87,8 @@ body.layout-fullscreen {
 }
 
 header {
+    height: 15vh;
     position: relative;
-    display: flex;
     flex-direction: column;
     color: var(--accent-color);
     padding: 16px 0;
@@ -174,22 +136,22 @@ header a .tag {
 
 
 .main {
-    height: 75vh;
-
     display: flex;
     flex-direction: row;
-    flex: 1;
+    flex: 1 0 auto;
 
+    // Stays in view while the content scrolls past it.
     .sidebar {
         flex: 0 0 var(--sidebar-width);
-        border-right: 2px solid var(--border-color);
+        position: sticky;
+        top: 12.5vh;
+        align-self: flex-start;
+        height: 75vh;
 
         display: flex;
         flex-direction: column;
-
         justify-content: center;
         align-items: center;
-
 
         .profile-image {
             border-radius: 50%;
@@ -248,18 +210,21 @@ header a .tag {
 
     .content-wrapper {
         flex: 1;
-        max-height: 75vh;
         display: flex;
         position: relative;
+        padding: 56px 56px 80px; // extra room above the footer's squiggle
+        border-left: 2px solid var(--border-color);
 
-        overflow-y: auto;
-
-        padding: 56px;
-
+        // Short pages (home, 404) center vertically; long pages start at the top.
         .content {
             width: 100%;
             margin: auto 0;
             counter-reset: post-count;
+        }
+
+        // Post lists stay top-aligned so the filter chips never move.
+        .content:has(> .filters) {
+            margin: 0;
         }
 
         a {
@@ -292,9 +257,6 @@ footer {
     padding: 20px 0;
 }
 
-
-
-
 a {
     text-decoration: none;
     color: inherit;
@@ -311,16 +273,19 @@ code {
     display: none;
 }
 
-
 @media screen and (max-width: 780px) {
     // Squeeze the squiggles a little on phones so more of the wave shows.
     :root {
         --squiggle-width: 1800px;
     }
 
-    body.layout-flow .main {
+    .main {
+        flex-direction: column;
+        padding-top: 16px;
+
         .sidebar {
             position: static;
+            width: 100%;
             height: auto;
             padding-bottom: 16px;
         }
@@ -351,20 +316,6 @@ code {
             .theme-toggle {
                 margin-top: 0;
             }
-        }
-    }
-
-    .main {
-        flex-direction: column;
-        padding-top: 16px;
-
-        .sidebar {
-            width: 100%;
-            border-right: none;
-        }
-
-        .content-wrapper {
-            justify-content: center;
         }
     }
 }

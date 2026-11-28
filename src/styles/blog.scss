@@ -52,9 +52,6 @@
 
     a.title {
         color: inherit;
-        &::before, &::after {
-            content: none;
-        }
     }
 
     .post-cover {
@@ -66,16 +63,8 @@
         border: 1px solid var(--border-color);
     }
 
-    .entry {
-        .learn-more {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-    }
-
     .date {
         font-size: 14px;
-        text-decoration: wavy;
         margin-top: 12px;
     }
 }

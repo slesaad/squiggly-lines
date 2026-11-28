@@ -25,8 +25,9 @@ This folder contains documentation for the Squiggly Lines project, intended to h
 
 | File | Purpose |
 |------|---------|
-| `astro.config.mjs` | Astro configuration (site, base URL, integrations) |
-| `src/consts.ts` | Site constants, categories, and helper functions |
+| `astro.config.mjs` | Astro configuration (site URL, integrations) |
+| `src/consts.ts` | Site constants (name, description, social links, pagination) and `getBase()` |
+| `src/lib/posts.ts` | `getSortedPosts()`, `getCategories()`, `pageCount()` |
 | `src/content.config.ts` | Content collection schema |
 | `src/layouts/BaseLayout.astro` | Master page template (theme init, layout) |
 | `src/components/ThemeToggle.astro` | Dark/light mode toggle |
