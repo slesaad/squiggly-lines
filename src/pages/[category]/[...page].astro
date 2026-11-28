@@ -2,14 +2,16 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostList from '../../components/PostList.astro';
-import { CATEGORIES, PAGINATION } from '../../consts';
-import { getSortedPosts } from '../../lib/posts';
+import { PAGINATION } from '../../consts';
+import { getCategories, getSortedPosts } from '../../lib/posts';
 import '../../styles/blog.scss';
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   const sorted = await getSortedPosts();
+  const categories = await getCategories();
 
-  return CATEGORIES.flatMap((category) => {
+  // One paginated page set per category that has posts (/art/, /art/2/, ...).
+  return categories.flatMap((category) => {
     const filtered = sorted.filter((post) => post.data.category === category);
     return paginate(filtered, {
       params: { category },

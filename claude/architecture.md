@@ -40,16 +40,20 @@ squiggly-lines/
 │   │   ├── BaseLayout.astro # Master layout (header, sidebar, footer, theme init)
 │   │   └── PostLayout.astro # Individual post layout (back link, article, date)
 │   ├── pages/
-│   │   ├── index.astro      # Home page
-│   │   ├── blog/[...page].astro         # All posts (paginated)
-│   │   ├── [category]/[...page].astro   # Dynamic category route (art/dev/make/misc)
+│   │   ├── index.astro      # Home page (intro + latest posts)
+│   │   ├── 404.astro        # Not-found page
+│   │   ├── posts/index.astro            # All posts, page 1
+│   │   ├── posts/page/[page].astro      # All posts, page 2+ (/posts/page/2/)
+│   │   ├── [category]/[...page].astro   # One paginated route per category in use
 │   │   └── posts/[...slug].astro        # Individual post pages
 │   ├── content/
 │   │   └── posts/           # Blog posts (Markdown/MDX)
 │   ├── styles/
 │   │   ├── global.scss      # CSS variables, layout, typography, responsive
 │   │   └── blog.scss        # Post cards, pagination, back link
-│   ├── consts.ts            # Site config, social links, categories, getBase()
+│   ├── lib/posts.ts         # getSortedPosts(), getCategories(), pageCount()
+│   ├── lib/back.ts          # Shared "go back" link handler
+│   ├── consts.ts            # Site config, social links, pagination, getBase()
 │   └── content.config.ts    # Content collection schema
 ├── .github/workflows/
 │   └── astro.yml            # GitHub Actions deployment
@@ -75,11 +79,11 @@ BaseLayout.astro (Master Layout)
 │   ├── Sidebar.astro
 │   │   ├── Profile image (CSS background-image, swaps per theme)
 │   │   ├── Social links
-│   │   ├── Category nav (active state highlighted)
+│   │   ├── Site nav: home · posts (active state highlighted)
 │   │   └── ThemeToggle.astro (sun/moon button)
 │   └── Content Wrapper
-│       ├── Category tag pill (optional, e.g. #art)
-│       └── <slot /> (page content)
+│       └── <slot /> (page content; post lists render PostList.astro:
+│           category filter chips, cards, pagination, end-of-list note)
 └── Footer.astro
     ├── SVG squiggly line (fill="currentColor")
     └── Copyright
@@ -129,7 +133,7 @@ Uses CSS `background-image: var(--display-picture)` where the URL values (includ
 schema: z.object({
   title: z.string(),
   date: z.coerce.date(),
-  category: z.enum(['art', 'dev', 'make', 'misc']),
+  category: z.string().optional(),    // Free-form, lowercased; slug-safe; not a reserved top-level name
   excerpt: z.string().optional(),
   cover: z.string().optional(),       // Cover image path (base path auto-prepended)
   draft: z.boolean().default(false),
@@ -148,11 +152,11 @@ schema: z.object({
 | File | Route | Description |
 |------|-------|-------------|
 | `pages/index.astro` | `/` | Home page |
-| `pages/blog/[...page].astro` | `/blog`, `/blog/2` | All posts (paginated) |
-| `pages/[category]/[...page].astro` | `/art`, `/dev`, `/make`, `/misc` | Dynamic category (paginated) |
+| `pages/posts/index.astro` + `pages/posts/page/[page].astro` | `/posts/`, `/posts/page/2/` | All posts (paginated) |
+| `pages/[category]/[...page].astro` | `/art/`, `/plants/`, `/plants/2/` | One category (paginated) |
 | `pages/posts/[...slug].astro` | `/posts/bigfoot` | Individual posts |
 
-Categories are defined in `consts.ts` as `CATEGORIES` array. The single dynamic route generates pages for all categories.
+Categories aren't a fixed list: `getCategories()` collects the categories used by published posts, and the dynamic route generates a page (and PostList a filter chip) for each. A post's category is optional; posts without one appear only under "all". Category names can't collide with other top-level routes or `public/` folders (`posts`, `photos`, ...); the schema rejects those with a clear error.
 
 ## Styling
 

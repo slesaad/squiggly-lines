@@ -24,6 +24,3 @@ export const SOCIAL = {
 export const PAGINATION = {
   perPage: 8,
 };
-
-export const CATEGORIES = ['art', 'dev', 'make', 'misc'] as const;
-export type Category = (typeof CATEGORIES)[number];

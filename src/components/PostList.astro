@@ -2,7 +2,8 @@
 import type { CollectionEntry } from 'astro:content';
 import PostCard from './PostCard.astro';
 import Pagination from './Pagination.astro';
-import { CATEGORIES, getBase } from '../consts';
+import { getBase } from '../consts';
+import { getCategories } from '../lib/posts';
 
 interface Props {
   posts: CollectionEntry<'posts'>[];
@@ -15,9 +16,10 @@ interface Props {
 
 const { posts, category, start = 0, page } = Astro.props;
 const base = getBase();
+const categories = await getCategories();
 const filters = [
   { label: 'all', href: `${base}posts/`, active: !category },
-  ...CATEGORIES.map((c) => ({ label: c, href: `${base}${c}/`, active: category === c })),
+  ...categories.map((c) => ({ label: c, href: `${base}${c}/`, active: category === c })),
 ];
 ---
 
